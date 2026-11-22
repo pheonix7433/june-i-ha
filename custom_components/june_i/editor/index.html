@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>3d_JX — 户型与房间动画编辑器</title>
+<title>June.Ⅰ · 户型与庭院绘制</title>
 <style>
     * { box-sizing: border-box; }
     html, body {
@@ -11,94 +11,186 @@
         height: 100%;
         font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
         color: #dbe2ec;
-        background: #12151a;
+        background: #0b0e13;
         overflow: hidden;
     }
     button { font-family: inherit; cursor: pointer; }
     button:disabled { opacity: 0.4; cursor: default; }
     #app { display: flex; flex-direction: column; height: 100%; }
 
+    /* ---------- 顶栏 ---------- */
     .topbar {
         display: flex;
         align-items: center;
-        gap: 7px;
-        padding: 8px 12px;
-        background: #181c22;
-        border-bottom: 1px solid #262d38;
+        gap: 10px;
+        padding: 7px 14px;
+        background: #0d1117;
+        border-bottom: 1px solid #1e2530;
+        flex-shrink: 0;
     }
-    .brand { font-size: 14px; font-weight: 600; letter-spacing: 0.3px; color: #eef3fa; }
-    .brand small { font-weight: 400; color: #6d7889; margin-left: 7px; font-size: 11px; }
-    .topbar .sep { width: 1px; height: 20px; background: #2a323e; margin: 0 4px; }
+    .brand { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+    .brand .logo {
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f0a03c, #d97706);
+        color: #14100a;
+        font-weight: 800; font-size: 13px;
+        display: flex; align-items: center; justify-content: center;
+        letter-spacing: 0.5px;
+    }
+    .brand .t { line-height: 1.15; }
+    .brand .t b { display: block; font-size: 14px; color: #eef3fa; letter-spacing: 1px; }
+    .brand .t small { display: block; font-size: 9.5px; color: #5b6779; letter-spacing: 2.2px; font-weight: 600; }
+
+    .steps { display: flex; align-items: center; gap: 2px; margin-left: 10px; flex-shrink: 0; }
+    .step {
+        display: flex; align-items: center; gap: 6px;
+        background: transparent; border: none;
+        color: #7d8898; font-size: 12px;
+        padding: 4px 7px; border-radius: 7px;
+        white-space: nowrap;
+    }
+    .step:hover { background: #161d27; color: #c3cddb; }
+    .step .n {
+        width: 18px; height: 18px; border-radius: 50%;
+        background: #1a212c; border: 1px solid #2a3543;
+        color: #8fa0b5; font-size: 10.5px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        transition: all .15s;
+    }
+    .step.on { color: #e8eef6; }
+    .step.on .n { background: #39c6f4; border-color: #39c6f4; color: #06222e; font-weight: 700; }
+    .step-link { width: 14px; height: 1px; background: #252e3b; flex-shrink: 0; }
+
+    .topbar .sep { width: 1px; height: 20px; background: #232c38; margin: 0 3px; flex-shrink: 0; }
     .topbar .spacer { flex: 1; }
+    .save-tag { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #6f7d8f; flex-shrink: 0; }
+    .save-tag .dot { width: 7px; height: 7px; border-radius: 50%; background: #38b26f; box-shadow: 0 0 6px rgba(56, 178, 111, 0.6); }
+
     .btn {
-        border: 1px solid #2e3745;
-        background: #1f2530;
+        border: 1px solid #2a3442;
+        background: #171d26;
         color: #c7d1e0;
         border-radius: 8px;
         padding: 6px 12px;
         font-size: 12.5px;
         transition: background .15s, border-color .15s;
+        white-space: nowrap;
     }
-    .btn:hover { background: #273041; border-color: #3d4b61; }
-    .btn.primary { background: #3565e0; border-color: #3565e0; color: #fff; }
-    .btn.primary:hover { background: #2c56c2; }
+    .btn:hover { background: #1f2836; border-color: #3a4960; }
+    .btn.primary { background: #f0a03c; border-color: #f0a03c; color: #191104; font-weight: 600; }
+    .btn.primary:hover { background: #ffb452; }
+    .btn.accent { background: #3565e0; border-color: #3565e0; color: #fff; font-weight: 600; }
+    .btn.accent:hover { background: #2c56c2; }
     .btn.danger { color: #e2726a; border-color: #4a2f2f; }
     .btn.danger:hover { background: #2e2121; }
     .btn.small { padding: 4px 9px; font-size: 12px; }
     .btn.ghost { background: transparent; border-color: transparent; color: #8a94a6; }
-    .btn.ghost:hover { background: #222935; color: #dbe2ec; }
-
-    /* 属性卡片内嵌在左栏底部（文档流布局，撑住左下角） */
-    .props-float {
-        flex: 0 0 auto;
-        max-height: 52%;
-        overflow-y: auto;
-        margin-top: 8px;
-        background: rgba(22, 26, 32, 0.95);
-        border: 1px solid #2a3341;
-        border-radius: 10px;
-        padding: 10px 11px;
-        scrollbar-width: thin;
-        scrollbar-color: #2e3745 transparent;
-    }
+    .btn.ghost:hover { background: #1a212b; color: #dbe2ec; }
 
     .main { flex: 1; display: flex; min-height: 0; }
 
+    /* ---------- 左栏 ---------- */
     .sidebar {
-        width: 234px;
+        width: 236px;
         flex-shrink: 0;
-        background: #161a20;
-        border-right: 1px solid #262d38;
-        padding: 12px;
+        background: #0d1117;
+        border-right: 1px solid #1e2530;
+        padding: 10px;
         display: flex;
         flex-direction: column;
+        gap: 8px;
     }
     .side-scroll {
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #2e3745 transparent;
-    }
-    .panel-right {
-        width: 460px;
-        flex-shrink: 0;
-        background: #161a20;
-        border-left: 1px solid #262d38;
-        padding: 12px;
-        overflow-y: auto;
+        scrollbar-color: #2a3442 transparent;
         display: flex;
         flex-direction: column;
         gap: 8px;
-        scrollbar-width: thin;
-        scrollbar-color: #2e3745 transparent;
     }
-    .stage {
+    .card {
+        background: #12161d;
+        border: 1px solid #1e2530;
+        border-radius: 11px;
+        padding: 11px 12px;
+    }
+    .card-title {
+        display: flex; align-items: baseline; gap: 7px;
+        margin: 0 0 9px;
+    }
+    .card-title .en { font-size: 9.5px; letter-spacing: 2.2px; color: #55637a; font-weight: 700; }
+    .card-title .zh { font-size: 13px; color: #e4eaf3; font-weight: 600; }
+    .card-title .ext { margin-left: auto; font-size: 11px; color: #6f7d8f; font-variant-numeric: tabular-nums; }
+    .card.flash { animation: flashCard 1.2s ease; }
+    @keyframes flashCard {
+        0%, 100% { border-color: #1e2530; box-shadow: none; }
+        25% { border-color: #f0a03c; box-shadow: 0 0 0 2px rgba(240, 160, 60, 0.25); }
+        60% { border-color: #f0a03c; box-shadow: 0 0 0 2px rgba(240, 160, 60, 0.18); }
+    }
+    /* JS 注入的面板内小标题（renderProps 等） */
+    .group-title {
+        font-size: 11px;
+        color: #77828f;
+        margin: 6px 0 8px;
+        letter-spacing: 1px;
+    }
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+    .mode-grid .mode-btn { border: 1px solid #222a36; background: #171d26; justify-content: center; }
+    .mode-grid .mode-btn.on { background: #17253e; }
+
+    /* ---------- 中部：画布 ---------- */
+    .stage-wrap {
         flex: 1;
-        position: relative;
         min-width: 0;
-        background: #14181e;
+        display: flex;
+        flex-direction: column;
+        background: #0e1218;
     }
+    .canvas-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-bottom: 1px solid #1e2530;
+        background: #0d1117;
+        overflow-x: auto;
+        scrollbar-width: none;
+        flex-shrink: 0;
+    }
+    .tool-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .tool-group .g-label { font-size: 10.5px; color: #55637a; font-weight: 700; letter-spacing: 1px; margin: 0 4px 0 2px; white-space: nowrap; }
+    .tool-group .g-label.cyan { color: #39c6f4; }
+    .tool-group .g-label.orange { color: #f0a03c; }
+    .tool-sep { width: 1px; height: 18px; background: #232c38; margin: 0 5px; flex-shrink: 0; }
+    .mode-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: 7px;
+        padding: 5px 9px;
+        font-size: 12.5px;
+        color: #9aa6b5;
+        white-space: nowrap;
+    }
+    .mode-btn:hover { background: #1a2230; color: #dbe2ec; }
+    .mode-btn.on { background: #17253e; border-color: #2c4f8f; color: #fff; }
+    .mode-btn .kbd {
+        font-size: 10px;
+        color: #5b6779;
+        border: 1px solid #2a3442;
+        border-radius: 4px;
+        padding: 0 4px;
+        background: #10151d;
+    }
+    .mode-btn.on .kbd { color: #9db9ee; border-color: #3c5ea6; }
+
+    .stage { flex: 1; position: relative; min-height: 0; }
     #plan2d { display: block; width: 100%; height: 100%; touch-action: none; }
     .stage-tip {
         position: absolute;
@@ -106,13 +198,26 @@
         top: 10px;
         font-size: 11.5px;
         color: #77828f;
-        background: rgba(20, 24, 30, 0.85);
-        border: 1px solid #262d38;
+        background: rgba(13, 17, 23, 0.85);
+        border: 1px solid #1e2530;
         border-radius: 7px;
         padding: 5px 10px;
         pointer-events: none;
         line-height: 1.6;
         max-width: 52%;
+    }
+    .zoom-tag {
+        position: absolute;
+        right: 14px;
+        top: 12px;
+        font-size: 11px;
+        color: #6d7889;
+        background: rgba(13, 17, 23, 0.85);
+        border: 1px solid #1e2530;
+        border-radius: 6px;
+        padding: 3px 8px;
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
     }
     .stage-tools {
         position: absolute;
@@ -123,57 +228,52 @@
         gap: 6px;
     }
     .stage-tools .btn {
-        width: 40px;
-        height: 32px;
-        padding: 0;
-        font-size: 13px;
-        text-align: center;
-        background: rgba(31, 37, 48, 0.92);
-    }
-    .zoom-tag {
-        position: absolute;
-        right: 14px;
-        top: 12px;
-        font-size: 11px;
-        color: #6d7889;
-        background: rgba(20, 24, 30, 0.85);
-        border: 1px solid #262d38;
-        border-radius: 6px;
-        padding: 3px 8px;
-        pointer-events: none;
-        font-variant-numeric: tabular-nums;
+        width: 40px; height: 32px; padding: 0;
+        font-size: 13px; text-align: center;
+        background: rgba(23, 29, 38, 0.92);
     }
 
-    .group-title {
-        font-size: 11px;
-        color: #78828f;
-        margin: 6px 0 8px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-    .mode-btn {
+    .statusbar {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        border: 1px solid #2b3341;
-        background: #1d232d;
-        border-radius: 8px;
-        padding: 8px 9px;
-        font-size: 12.5px;
-        color: #b7c2d2;
+        gap: 14px;
+        padding: 5px 12px;
+        border-top: 1px solid #1e2530;
+        background: #0d1117;
+        font-size: 11.5px;
+        color: #7d8898;
+        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
     }
-    .mode-btn:hover { border-color: #3d4b61; background: #232b37; }
-    .mode-btn.on { background: #24406f; border-color: #3565e0; color: #fff; }
-    .mode-btn .kbd {
-        font-size: 10px;
-        color: #6d7889;
-        border: 1px solid #333c4b;
-        border-radius: 4px;
-        padding: 1px 5px;
-        background: #171c24;
+    .statusbar .mono { font-family: ui-monospace, Consolas, monospace; letter-spacing: 0.3px; }
+    .statusbar .sep2 { flex: 1; }
+
+    /* ---------- 右栏 ---------- */
+    .panel-right {
+        width: 342px;
+        flex-shrink: 0;
+        background: #0d1117;
+        border-left: 1px solid #1e2530;
+        padding: 10px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: #2a3442 transparent;
     }
-    .mode-btn.on .kbd { color: #9db9ee; border-color: #40609f; }
+    .props-float {
+        flex: 1 1 auto;
+        min-height: 120px;
+        overflow-y: auto;
+        background: transparent;
+        border: none;
+        padding: 0;
+        scrollbar-width: thin;
+        scrollbar-color: #2a3442 transparent;
+    }
+    .props-empty { text-align: center; padding: 26px 10px; color: #55637a; font-size: 12px; line-height: 1.8; }
+    .props-empty .big { font-size: 13px; color: #93a2b8; font-weight: 600; margin-bottom: 4px; }
 
     .list { display: flex; flex-direction: column; gap: 4px; }
     .list-item {
@@ -182,13 +282,13 @@
         gap: 8px;
         padding: 6px 9px;
         border-radius: 7px;
-        background: #1d232d;
-        border: 1px solid #262d38;
+        background: #171d26;
+        border: 1px solid #222a36;
         font-size: 12.5px;
         cursor: pointer;
     }
-    .list-item:hover { border-color: #3d4b61; }
-    .list-item.on { border-color: #3565e0; background: #1f2c44; }
+    .list-item:hover { border-color: #344152; }
+    .list-item.on { border-color: #2c4f8f; background: #17253e; }
     .list-item .dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
     .list-item .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .list-item .dim { color: #6d7889; font-size: 11px; font-variant-numeric: tabular-nums; }
@@ -196,53 +296,63 @@
 
     .furn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
     .furn-btn {
-        border: 1px solid #2b3341;
-        background: #1d232d;
+        border: 1px solid #222a36;
+        background: #171d26;
         border-radius: 7px;
-        padding: 7px 0;
+        padding: 8px 0;
         font-size: 12px;
         color: #b7c2d2;
     }
-    .furn-btn:hover { border-color: #3d4b61; }
-    .furn-btn.on { background: #24406f; border-color: #3565e0; color: #fff; }
+    .furn-btn:hover { border-color: #344152; background: #1c2430; }
+    .furn-btn.on { background: #17253e; border-color: #2c4f8f; color: #fff; }
+    .search-box {
+        width: 100%;
+        border: 1px solid #222a36;
+        border-radius: 7px;
+        padding: 6px 9px;
+        font-size: 12px;
+        color: #dbe2ec;
+        background: #10151d;
+        margin-bottom: 7px;
+    }
+    .search-box:focus { outline: none; border-color: #2c4f8f; }
 
-    .hint { font-size: 11.5px; color: #78828f; line-height: 1.7; margin: 8px 0 0; }
+    .hint { font-size: 11.5px; color: #77828f; line-height: 1.7; margin: 8px 0 0; }
     .hint b { color: #aeb9c9; font-weight: 500; }
-    .divider { height: 1px; background: #262d38; margin: 10px 0; }
+    .divider { height: 1px; background: #1e2530; margin: 9px 0; }
 
     .field { display: flex; gap: 6px; margin-bottom: 6px; }
-    .field label { font-size: 12px; color: #78828f; width: 52px; flex-shrink: 0; line-height: 29px; }
+    .field label { font-size: 12px; color: #77828f; width: 52px; flex-shrink: 0; line-height: 29px; }
     input[type="text"], input[type="password"], input[type="number"], select {
         flex: 1;
         min-width: 0;
-        border: 1px solid #2b3341;
+        border: 1px solid #222a36;
         border-radius: 7px;
         padding: 6px 8px;
         font-size: 12px;
         color: #dbe2ec;
-        background: #171c24;
+        background: #10151d;
         font-family: inherit;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #3565e0; }
 
     .color-row { display: flex; gap: 6px; margin: 6px 0; flex-wrap: wrap; }
     .swatch {
-        width: 22px;
-        height: 22px;
+        width: 22px; height: 22px;
         border-radius: 6px;
-        border: 2px solid #1d232d;
-        box-shadow: 0 0 0 1px #2e3745;
+        border: 2px solid #171d26;
+        box-shadow: 0 0 0 1px #2a3442;
         cursor: pointer;
     }
     .swatch.on { box-shadow: 0 0 0 2px #3565e0; }
 
     .preview-box {
         position: relative;
-        height: 746px;
+        height: 235px;
         border-radius: 10px;
         overflow: hidden;
-        background: #10141a;
-        border: 1px solid #262d38;
+        background: #0e1218;
+        border: 1px solid #1e2530;
         cursor: grab;
     }
     #preview3d { display: block; width: 100%; height: 100%; }
@@ -252,53 +362,54 @@
         top: 8px;
         font-size: 11px;
         color: #9aa6b5;
-        background: rgba(16, 20, 26, 0.82);
-        border: 1px solid #262d38;
+        background: rgba(13, 17, 23, 0.82);
+        border: 1px solid #1e2530;
         border-radius: 5px;
         padding: 2px 7px;
         pointer-events: none;
     }
 
-    .seg { display: flex; border: 1px solid #2b3341; border-radius: 8px; overflow: hidden; }
+    .seg { display: flex; border: 1px solid #222a36; border-radius: 8px; overflow: hidden; }
     .seg button {
         flex: 1;
         border: none;
-        background: #1d232d;
+        background: #12171f;
         color: #8a94a6;
         padding: 6px 0;
         font-size: 12px;
     }
-    .seg button + button { border-left: 1px solid #2b3341; }
-    .seg button.on { background: #24406f; color: #fff; }
+    .seg button + button { border-left: 1px solid #222a36; }
+    .seg button.on { background: #17253e; color: #fff; }
 
     .check-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #9aa6b5; }
     .check-row input { accent-color: #3565e0; }
 
     .slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .slider-row label { font-size: 12px; color: #78828f; width: 42px; flex-shrink: 0; }
-    .slider-row input[type="range"] { flex: 1; accent-color: #3565e0; }
+    .slider-row label { font-size: 12px; color: #77828f; width: 42px; flex-shrink: 0; }
+    .slider-row input[type="range"] { flex: 1; accent-color: #f0a03c; }
     .slider-row .val { width: 44px; text-align: right; font-size: 12px; color: #b7c2d2; font-variant-numeric: tabular-nums; }
 
     .btn-row { display: flex; gap: 6px; margin: 4px 0; }
     .btn-row .btn { flex: 1; }
 
     .stats-box {
-        background: #1a1f27;
-        border: 1px solid #262d38;
+        background: #10151d;
+        border: 1px solid #1e2530;
         border-radius: 8px;
-        padding: 8px 10px;
-        font-size: 12px;
-        color: #8a94a6;
+        padding: 7px 10px;
+        font-size: 11.5px;
+        color: #7d8898;
         line-height: 1.8;
+        margin-bottom: 8px;
     }
     .stats-box b { color: #dbe2ec; font-weight: 500; font-variant-numeric: tabular-nums; }
 
     .toast {
         position: fixed;
         left: 50%;
-        bottom: 26px;
+        bottom: 40px;
         transform: translateX(-50%);
-        background: rgba(38, 45, 56, 0.96);
+        background: rgba(30, 37, 48, 0.96);
         border: 1px solid #3a4557;
         color: #e6ecf4;
         font-size: 12.5px;
@@ -313,206 +424,258 @@
     .toast.show { opacity: 1; }
 
     dialog {
-        border: 1px solid #2b3341;
+        border: 1px solid #222a36;
         border-radius: 12px;
         padding: 0;
-        background: #1a1f27;
+        background: #12161d;
         color: #dbe2ec;
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
         width: 540px;
         max-width: 92vw;
     }
-    dialog::backdrop { background: rgba(6, 8, 11, 0.6); }
-    dialog .dlg-head { padding: 13px 18px; border-bottom: 1px solid #262d38; font-weight: 600; font-size: 13.5px; }
+    dialog::backdrop { background: rgba(4, 6, 9, 0.65); }
+    dialog .dlg-head { padding: 13px 18px; border-bottom: 1px solid #1e2530; font-weight: 600; font-size: 13.5px; }
     dialog .dlg-body { padding: 14px 18px; }
     dialog textarea {
         width: 100%;
         height: 250px;
-        border: 1px solid #2b3341;
+        border: 1px solid #222a36;
         border-radius: 8px;
         padding: 10px;
         font-family: ui-monospace, Consolas, monospace;
         font-size: 12px;
         line-height: 1.5;
         resize: vertical;
-        background: #12151a;
+        background: #0b0e13;
         color: #c7d1e0;
     }
-    dialog .dlg-foot { padding: 12px 18px; border-top: 1px solid #262d38; display: flex; justify-content: flex-end; gap: 8px; }
+    dialog .dlg-foot { padding: 12px 18px; border-top: 1px solid #1e2530; display: flex; justify-content: flex-end; gap: 8px; }
     .bake-preview {
         display: block;
         width: 100%;
-        border: 1px solid #2b3341;
+        max-height: 168px;
+        object-fit: contain;
+        border: 1px solid #222a36;
         border-radius: 8px;
-        background: #10141b;
+        background: #e9eef4;
     }
 </style>
 </head>
 <body>
 <div id="app">
     <div class="topbar">
-        <div class="brand">3d_JX<small>v1.3.2 · 为 June.Ⅰ 生成户型</small></div>
+        <div class="brand">
+            <div class="logo">J1</div>
+            <div class="t">
+                <b>户型与庭院绘制</b>
+                <small>JUNE.Ⅰ · DESKTOP CREATOR · v1.3.4</small>
+            </div>
+        </div>
+
+        <div class="steps">
+            <button class="step" data-step="1"><span class="n">1</span>导入底图</button>
+            <span class="step-link"></span>
+            <button class="step" data-step="2"><span class="n">2</span>标定比例</button>
+            <span class="step-link"></span>
+            <button class="step on" data-step="3"><span class="n">3</span>绘制空间</button>
+            <span class="step-link"></span>
+            <button class="step" data-step="4"><span class="n">4</span>摆放物件</button>
+            <span class="step-link"></span>
+            <button class="step" data-step="5"><span class="n">5</span>放置灯光</button>
+            <span class="step-link"></span>
+            <button class="step" data-step="6"><span class="n">6</span>应用户型</button>
+        </div>
+
+        <div class="spacer"></div>
+        <div class="save-tag"><span class="dot"></span><span id="saveTag">自动保存已开启</span></div>
         <div class="sep"></div>
         <button class="btn small" id="btnUndo" title="Ctrl+Z">撤销</button>
         <button class="btn small" id="btnRedo" title="Ctrl+Y">重做</button>
-        <select id="snapSelect" style="width:104px;flex:none" title="吸附精度">
+        <select id="snapSelect" style="width:96px;flex:none" title="吸附精度">
             <option value="1">吸附 1cm</option>
             <option value="10" selected>吸附 10cm</option>
             <option value="50">吸附 50cm</option>
         </select>
-        <div class="spacer"></div>
-        <button class="btn" id="btnLoadHA">从 HA 读取</button>
-        <button class="btn" id="btnOpenFile">打开 JSON</button>
-        <button class="btn" id="btnPaste">粘贴</button>
-        <button class="btn" id="btnCopy">复制</button>
-        <button class="btn primary" id="btnSaveFile">下载 house.json</button>
-        <button class="btn" id="btnSaveHA" title="存到 HA 户型中枢，小程序自动拉取">存到 HA</button>
         <div class="sep"></div>
-        <button class="btn ghost" id="btnSample">示例</button>
-        <button class="btn ghost danger" id="btnClear">清空</button>
+        <button class="btn small" id="btnLoadHA" title="从 HA 户型中枢读取">读 HA</button>
+        <button class="btn small" id="btnOpenFile">打开</button>
+        <button class="btn small" id="btnPaste">粘贴</button>
+        <button class="btn small" id="btnCopy">复制</button>
+        <button class="btn small" id="btnSample">示例</button>
+        <button class="btn small ghost danger" id="btnClear">清空</button>
+        <button class="btn small" id="btnSaveFile" title="下载 house.json">下载</button>
+        <button class="btn primary small" id="btnSaveHA" title="存到 HA 户型中枢，小程序自动拉取">存到 HA</button>
     </div>
 
     <div class="main">
-        <!-- 左栏：模式与素材 -->
+        <!-- 左栏：按模式显示的上下文面板 + 常显模型库 -->
         <div class="sidebar">
             <div class="side-scroll">
-            <div class="group-title">编辑模式</div>
-            <div class="mode-grid">
-                <button class="mode-btn on" data-mode="room"><span>房间</span><span class="kbd">1</span></button>
-                <button class="mode-btn" data-mode="opening"><span>门窗</span><span class="kbd">2</span></button>
-                <button class="mode-btn" data-mode="wall"><span>墙体</span><span class="kbd">3</span></button>
-                <button class="mode-btn" data-mode="furniture"><span>家具</span><span class="kbd">4</span></button>
-                <button class="mode-btn" data-mode="device"><span>设备</span><span class="kbd">5</span></button>
-                <button class="mode-btn" data-mode="trace"><span>底图</span><span class="kbd">6</span></button>
-            </div>
+                <div id="panelTrace" style="display:none" class="card">
+                    <div class="card-title"><span class="en">BASEMAP</span><span class="zh">户型底图</span></div>
+                    <div class="btn-row">
+                        <button class="btn small primary" id="btnPickTrace">导入</button>
+                        <button class="btn small" id="btnCalibScale">标比例尺</button>
+                    </div>
+                    <div class="slider-row"><label>透明</label><input type="range" id="traceOpacity" min="0.1" max="0.9" step="0.05" value="0.35"><span class="val" id="traceOpacityVal">35%</span></div>
+                    <div class="btn-row">
+                        <button class="btn small danger" id="btnTraceRemove">移除底图</button>
+                    </div>
+                    <p class="hint">① 上传你家户型图（自动压缩存储）② 点「标比例尺」，在图上点一段已知长度的墙两端，输入实际距离 ③ 拖动底图对齐，照着描。</p>
+                </div>
 
-            <div id="panelWall" style="display:none">
-                <div class="group-title">墙体样式</div>
-                <p class="hint">点<b>两个房间共用</b>的墙线，在三种样式间循环：</p>
-                <div class="list">
-                    <div class="list-item"><span class="name">常规墙</span><span class="dim">默认 · 全高</span></div>
-                    <div class="list-item"><span class="name" style="color:#e0902a">矮墙</span><span class="dim">45cm 半墙</span></div>
-                    <div class="list-item"><span class="name" style="color:#38b26f">打通</span><span class="dim">开放式，不渲染</span></div>
+                <div id="panelOpening" style="display:none" class="card">
+                    <div class="card-title"><span class="en">OPENINGS</span><span class="zh">门窗</span></div>
+                    <div class="mode-grid" style="margin-bottom:8px">
+                        <button class="mode-btn on" data-open="door"><span>放门</span><span class="kbd">D</span></button>
+                        <button class="mode-btn" data-open="window"><span>放窗</span><span class="kbd">W</span></button>
+                    </div>
+                    <p class="hint">在房间墙线附近点一下放置，有虚影预览；按住拖动沿墙滑；<b>[</b> <b>]</b> 调宽窄；门画开向弧线，窗是双线。</p>
                 </div>
-                <p class="hint">外墙自动加厚（24cm），内墙 20cm；门窗会在墙上开真实的洞。</p>
-            </div>
 
-            <div id="panelOpening" style="display:none">
-                <div class="group-title">门窗</div>
-                <div class="mode-grid" style="margin-bottom:8px">
-                    <button class="mode-btn on" data-open="door"><span>放门</span><span class="kbd">D</span></button>
-                    <button class="mode-btn" data-open="window"><span>放窗</span><span class="kbd">W</span></button>
+                <div id="panelWall" style="display:none" class="card">
+                    <div class="card-title"><span class="en">WALLS</span><span class="zh">墙体样式</span></div>
+                    <p class="hint">点<b>两个房间共用</b>的墙线，在三种样式间循环：</p>
+                    <div class="list">
+                        <div class="list-item"><span class="name">常规墙</span><span class="dim">默认 · 全高</span></div>
+                        <div class="list-item"><span class="name" style="color:#e0902a">矮墙</span><span class="dim">45cm 半墙</span></div>
+                        <div class="list-item"><span class="name" style="color:#38b26f">打通</span><span class="dim">开放式，不渲染</span></div>
+                    </div>
+                    <p class="hint">外墙自动加厚（24cm），内墙 20cm；门窗会在墙上开真实的洞。</p>
                 </div>
-                <p class="hint">在房间墙线附近点一下放置，有虚影预览；按住拖动沿墙滑；<b>[</b> <b>]</b> 调宽窄；门画开向弧线，窗是双线。</p>
-            </div>
 
-            <div id="panelFurniture" style="display:none">
-                <div class="group-title">家具库</div>
-                <div class="furn-grid" id="furnGrid"></div>
-                <p class="hint">选类型后画布上出现虚影，点一下落位；拖动移动，<b>R</b> 旋转，<b>Ctrl+D</b> 复制；属性面板可改宽度、颜色。</p>
-            </div>
+                <div id="panelDevice" style="display:none" class="card">
+                    <div class="card-title"><span class="en">DEVICES</span><span class="zh">设备与灯光</span><span class="ext" id="deviceCount">0</span></div>
+                    <div class="field"><label>地址</label><input type="text" id="haUrl" placeholder="http://192.168.110.57:8123" /></div>
+                    <div class="field"><label>令牌</label><input type="password" id="haToken" placeholder="长期访问令牌" /></div>
+                    <div class="btn-row" style="margin-bottom:10px">
+                        <button class="btn small accent" id="btnFetchDevices">拉取设备</button>
+                        <button class="btn small" id="btnAddDevice">手动添加</button>
+                    </div>
+                    <div class="list" id="deviceList"></div>
+                    <p class="hint">灯可先「拉取设备」再放置：3D 里按 HA 实时状态显示光斑；选中设备后在右侧存它的聚焦机位。</p>
+                </div>
 
-            <div id="panelDevice" style="display:none">
-                <div class="group-title">HA 连接（拉设备与实时状态）</div>
-                <div class="field"><label>地址</label><input type="text" id="haUrl" placeholder="http://192.168.110.57:8123" /></div>
-                <div class="field"><label>令牌</label><input type="password" id="haToken" placeholder="长期访问令牌" /></div>
-                <div class="btn-row" style="margin-bottom:10px">
-                    <button class="btn small" id="btnFetchDevices">拉取设备</button>
-                    <button class="btn small" id="btnAddDevice">手动添加</button>
-                </div>
-                <div class="group-title">设备（<span id="deviceCount">0</span>）</div>
-                <div class="list" id="deviceList"></div>
-                <p class="hint">灯可先「拉取设备」再放置：3D 里按 HA 实时状态显示光斑；选中设备后在右侧存它的聚焦机位。</p>
-            </div>
-
-            <div id="panelTrace" style="display:none">
-                <div class="group-title">底图（户型图 / 效果图）</div>
-                <div class="btn-row">
-                    <button class="btn small" id="btnPickTrace">上传底图</button>
-                    <button class="btn small" id="btnCalibScale">标比例尺</button>
-                </div>
-                <div class="slider-row"><label>透明</label><input type="range" id="traceOpacity" min="0.1" max="0.9" step="0.05" value="0.35"><span class="val" id="traceOpacityVal">35%</span></div>
-                <div class="btn-row">
-                    <button class="btn small danger" id="btnTraceRemove">移除底图</button>
-                </div>
-                <p class="hint">① 上传你家户型图（自动压缩存储）② 点「标比例尺」，在图上点一段已知长度的墙两端，输入实际距离 ③ 拖动底图对齐房间，照着描。</p>
+                <div id="panelFurniture" class="card">
+                    <div class="card-title"><span class="en">OBJECTS</span><span class="zh">模型库</span></div>
+                    <input type="text" class="search-box" id="furnSearch" placeholder="搜索模型…" />
+                    <div class="furn-grid" id="furnGrid"></div>
+                    <p class="hint">选类型后画布上出现虚影，点一下落位；拖动移动，<b>R</b> 旋转，<b>Ctrl+D</b> 复制；属性面板可改宽度、颜色。</p>
                 </div>
             </div>
-            <div class="props-float" id="props"></div>
         </div>
 
-        <!-- 中间：2D 编辑画布 -->
-        <div class="stage">
-            <canvas id="plan2d"></canvas>
-            <div class="zoom-tag" id="zoomTag">100%</div>
-            <div class="stage-tools">
-                <button class="btn" id="btnZoomIn" title="放大">＋</button>
-                <button class="btn" id="btnZoomOut" title="缩小">－</button>
-                <button class="btn" id="btnFit" title="适配全部（F）">适配</button>
+        <!-- 中部：工具条 + 2D 画布 + 状态栏 -->
+        <div class="stage-wrap">
+            <div class="canvas-toolbar">
+                <div class="tool-group">
+                    <span class="g-label cyan">通用</span>
+                    <button class="mode-btn on" data-mode="room"><span>选择 / 房间</span><span class="kbd">1</span></button>
+                    <button class="mode-btn" data-mode="opening"><span>门窗</span><span class="kbd">2</span></button>
+                    <button class="mode-btn" data-mode="wall"><span>墙体</span><span class="kbd">3</span></button>
+                </div>
+                <div class="tool-sep"></div>
+                <div class="tool-group">
+                    <span class="g-label orange">物件</span>
+                    <button class="mode-btn" data-mode="furniture"><span>家具</span><span class="kbd">4</span></button>
+                    <button class="mode-btn" data-mode="device"><span>设备</span><span class="kbd">5</span></button>
+                </div>
+                <div class="tool-sep"></div>
+                <div class="tool-group">
+                    <span class="g-label">底图</span>
+                    <button class="mode-btn" data-mode="trace"><span>描摹底图</span><span class="kbd">6</span></button>
+                </div>
+                <div class="spacer" style="flex:1"></div>
+                <div class="tool-group">
+                    <button class="btn small" id="btnFit" title="适配全部（F）">适配画布</button>
+                </div>
             </div>
-            <div class="stage-tip">滚轮缩放 · 右键/Shift 拖动平移 · 1-6 切模式 · F 适配 · Ctrl+Z 撤销 · Delete 删除 · Esc 取消</div>
+
+            <div class="stage">
+                <canvas id="plan2d"></canvas>
+                <div class="zoom-tag" id="zoomTag">100%</div>
+                <div class="stage-tools">
+                    <button class="btn" id="btnZoomIn" title="放大">＋</button>
+                    <button class="btn" id="btnZoomOut" title="缩小">－</button>
+                </div>
+                <div class="stage-tip">滚轮缩放 · 右键/Shift 拖动平移 · 1-6 切模式 · F 适配 · Ctrl+Z 撤销 · Delete 删除 · Esc 取消</div>
+            </div>
+
+            <div class="statusbar">
+                <span class="mono" id="coordTag">X 0.00 m · Y 0.00 m</span>
+                <span id="snapTag">吸附: 10cm</span>
+                <span class="sep2"></span>
+                <span>滚轮缩放</span>
+            </div>
         </div>
 
-        <!-- 右栏：3D 预览 -->
+        <!-- 右栏：3D 实时预览 / 导图 / 属性 -->
         <div class="panel-right">
-            <div class="group-title" style="margin:0">3D 预览（左键旋转 · 右键平移中心 · 滚轮缩放）</div>
-            <div class="preview-box">
-                <canvas id="preview3d"></canvas>
-                <div class="preview-tag" id="previewTag">总览</div>
-            </div>
-
-            <div class="seg" id="styleSeg">
-                <button data-style="solid" class="on">实体</button>
-                <button data-style="blueprint">线条</button>
-            </div>
-            <div class="check-row"><input type="checkbox" id="chkSimFocus" checked><span>选中设备时演示小程序效果（房间线条勾勒 + 开灯地板变橙）</span></div>
-
-            <div class="divider"></div>
-            <div class="group-title" style="margin:0">搭建动画（主页特效预览）</div>
-            <div class="field">
-                <select id="buildRoom"></select>
-                <button class="btn small primary" id="btnBuildPlay" style="flex:none">▶ 播放</button>
-            </div>
-            <p class="hint">从总览蓝图飞进选中房间：地板淡入 → 墙体同步生长 → 家具逐件从地面长出 → 线条隐去。播完自动停在房间视角；地板颜色跟随该房间灯的实际开关状态。</p>
-
-            <div class="btn-row">
-                <button class="btn small" id="btnCamDefault">总览</button>
-                <button class="btn small" id="btnCamFocus">贴到选中</button>
-            </div>
-
-            <!-- 小程序不再使用相机机位预设，旧的存/清按钮保留但隐藏，避免误操作 -->
-            <div style="display:none">
-                <div class="btn-row">
-                    <button class="btn small primary" id="btnSaveDefault">存为默认视角</button>
+            <div class="card">
+                <div class="card-title">
+                    <span class="en">LIVE MODEL</span><span class="zh">3D 实时预览</span>
+                    <span class="ext">左键旋转 · 右键平移 · 滚轮缩放</span>
                 </div>
-                <div class="btn-row">
-                    <button class="btn small" id="btnSaveFocus">存为该设备聚焦</button>
-                    <button class="btn small danger" id="btnClearFocus">清除</button>
+                <div class="preview-box">
+                    <canvas id="preview3d"></canvas>
+                    <div class="preview-tag" id="previewTag">总览</div>
                 </div>
-                <p class="hint" id="focusHint"></p>
+                <div class="seg" id="styleSeg" style="margin-top:8px">
+                    <button data-style="solid" class="on">实体</button>
+                    <button data-style="blueprint">线条</button>
+                </div>
+                <div class="check-row" style="margin-top:7px"><input type="checkbox" id="chkSimFocus" checked><span>选中设备时演示小程序效果（房间勾勒 + 开灯变橙）</span></div>
+                <div class="divider"></div>
+                <div class="field" style="margin-bottom:0">
+                    <select id="buildRoom"></select>
+                    <button class="btn small primary" id="btnBuildPlay" style="flex:none">▶ 播放生成</button>
+                </div>
+                <p class="hint">从总览飞进选中房间：地板淡入 → 墙体生长 → 家具落位 → 灯亮。地板颜色跟随该房间灯的实际开关状态。</p>
+                <div class="btn-row">
+                    <button class="btn small" id="btnCamDefault">总览</button>
+                    <button class="btn small" id="btnCamFocus">贴到选中</button>
+                </div>
+                <!-- 小程序不再使用相机机位预设，旧的存/清按钮保留但隐藏，避免误操作 -->
+                <div style="display:none">
+                    <div class="btn-row">
+                        <button class="btn small primary" id="btnSaveDefault">存为默认视角</button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn small" id="btnSaveFocus">存为该设备聚焦</button>
+                        <button class="btn small danger" id="btnClearFocus">清除</button>
+                    </div>
+                    <p class="hint" id="focusHint"></p>
+                </div>
             </div>
 
-            <div class="divider"></div>
-            <div class="group-title" style="margin:0">导出户型图（小程序预渲染机位）</div>
-            <canvas id="bakePreview" class="bake-preview" title="预渲染效果预览（图片 + 热区随之下发到小程序）"></canvas>
-            <div class="seg" id="bakeRot" style="margin-top:8px">
-                <button data-rot="0" class="on">视角 0°</button>
-                <button data-rot="90">90°</button>
-                <button data-rot="180">180°</button>
-                <button data-rot="270">270°</button>
+            <div class="card" id="bakeCard">
+                <div class="card-title">
+                    <span class="en">EXPORT</span><span class="zh">导图 · 应用到小程序</span>
+                </div>
+                <canvas id="bakePreview" class="bake-preview" title="预渲染效果预览（图片 + 热区随之下发到小程序）"></canvas>
+                <div class="seg" id="bakeRot" style="margin-top:8px">
+                    <button data-rot="0" class="on">视角 0°</button>
+                    <button data-rot="90">90°</button>
+                    <button data-rot="180">180°</button>
+                    <button data-rot="270">270°</button>
+                </div>
+                <div class="slider-row" style="margin-top:6px"><label>俯仰</label><input type="range" id="bakePitch" min="0.35" max="0.75" step="0.01" value="0.5"><span class="val" id="bakePitchVal"></span></div>
+                <div class="slider-row"><label>大小</label><input type="range" id="bakeScale" min="0.6" max="1.8" step="0.05" value="1"><span class="val" id="bakeScaleVal"></span></div>
+                <div class="slider-row"><label>留白</label><input type="range" id="bakeMargin" min="0" max="80" step="2" value="26"><span class="val" id="bakeMarginVal"></span></div>
+                <div class="btn-row">
+                    <button class="btn small primary" id="btnBakeExport">导出 PNG + 热区</button>
+                    <button class="btn small accent" id="btnBakeUpload">上传到 HA</button>
+                </div>
+                <p class="hint">机位决定小程序首页那张「3D 户型图」的朝向、构图与大小；上传 HA 后小程序启动时自动拉取。</p>
             </div>
-            <div class="slider-row"><label>俯仰</label><input type="range" id="bakePitch" min="0.35" max="0.75" step="0.01" value="0.5"><span class="val" id="bakePitchVal"></span></div>
-            <div class="slider-row"><label>大小</label><input type="range" id="bakeScale" min="0.6" max="1.8" step="0.05" value="1"><span class="val" id="bakeScaleVal"></span></div>
-            <div class="slider-row"><label>留白</label><input type="range" id="bakeMargin" min="0" max="80" step="2" value="26"><span class="val" id="bakeMarginVal"></span></div>
-            <div class="btn-row">
-                <button class="btn small primary" id="btnBakeExport">导出 PNG + 热区</button>
-                <button class="btn small" id="btnBakeUpload">上传到 HA</button>
-            </div>
-            <p class="hint">机位决定小程序首页那张「3D 户型图」的朝向、构图与大小；导出的两个文件放进小程序 images/house/（或将来经 HA 下发），小程序端自动适配，无需改代码。</p>
 
-            <div class="divider"></div>
-            <div class="group-title" style="margin:0">当前统计</div>
-            <div class="stats-box" id="stats"></div>
+            <div class="card" style="flex:1 1 auto; min-height:180px; display:flex; flex-direction:column">
+                <div class="card-title">
+                    <span class="en">PROPERTIES</span><span class="zh">属性</span>
+                </div>
+                <div class="stats-box" id="stats"></div>
+                <div class="props-float" id="props"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -2647,6 +2810,11 @@ return module.exports;
         autosaveTimer = setTimeout(() => {
             try {
                 localStorage.setItem('floorplan-autosave', JSON.stringify(H.normalizeHouse(state.house)));
+                const tag = $('saveTag');
+                if (tag) {
+                    const t = new Date();
+                    tag.textContent = '已自动保存 ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+                }
             } catch (e) { /* 存储满时忽略 */ }
         }, 600);
     }
@@ -3729,6 +3897,10 @@ return module.exports;
     canvas.addEventListener('pointermove', event => {
         const p = pointerPos(event);
         state.hover = { p, cm: toCm(p.x, p.y) };
+        const coordTag = $('coordTag');
+        if (coordTag && state.hover.cm) {
+            coordTag.textContent = 'X ' + (state.hover.cm.x / 100).toFixed(2) + ' m · Y ' + (state.hover.cm.y / 100).toFixed(2) + ' m';
+        }
         if (state.drag && state.drag.kind === 'pan') {
             state.view.ox = state.drag.origOx + (p.x - state.drag.startP.x);
             state.view.oy = state.drag.origOy + (p.y - state.drag.startP.y);
@@ -4040,18 +4212,21 @@ return module.exports;
     function renderPanels() {
         const grid = $('furnGrid');
         grid.innerHTML = '';
-        Object.keys(H.FURNITURE_TYPES).forEach(key => {
-            const btn = document.createElement('button');
-            btn.className = 'furn-btn' + (state.armedFurniture === key ? ' on' : '');
-            btn.dataset.type = key;
-            btn.textContent = H.FURNITURE_TYPES[key].name;
-            btn.addEventListener('click', () => {
-                state.armedFurniture = state.armedFurniture === key ? '' : key;
-                setMode('furniture');
-                renderPanels();
+        const kw = ($('furnSearch') && $('furnSearch').value.trim()) || '';
+        Object.keys(H.FURNITURE_TYPES)
+            .filter(key => !kw || H.FURNITURE_TYPES[key].name.indexOf(kw) !== -1 || key.toLowerCase().indexOf(kw.toLowerCase()) !== -1)
+            .forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'furn-btn' + (state.armedFurniture === key ? ' on' : '');
+                btn.dataset.type = key;
+                btn.textContent = H.FURNITURE_TYPES[key].name;
+                btn.addEventListener('click', () => {
+                    state.armedFurniture = state.armedFurniture === key ? '' : key;
+                    setMode('furniture');
+                    renderPanels();
+                });
+                grid.appendChild(btn);
             });
-            grid.appendChild(btn);
-        });
 
         // 设备列表：HA 拉取的 + 户型里已有的
         const catalog = [];
@@ -4113,9 +4288,11 @@ return module.exports;
         MODES.forEach(key => {
             const panel = $('panel' + key.charAt(0).toUpperCase() + key.slice(1));
             if (panel) {
-                panel.style.display = key === mode ? '' : 'none';
+                // 模型库常显（ha_bridge 同款）：点家具按钮时自身会切到家具模式
+                panel.style.display = (key === mode || key === 'furniture') ? '' : 'none';
             }
         });
+        updateStepper();
         canvas.style.cursor = (mode === 'room' || mode === 'opening') ? 'crosshair' : '';
         draw();
         renderProps();
@@ -5052,6 +5229,41 @@ return module.exports;
         reader.readAsDataURL(file);
     }
 
+    // ---------- 顶部流程条（对齐 ha_bridge 工作流）----------
+    const STEP_MODES = { 1: 'trace', 3: 'room', 4: 'furniture', 5: 'device' };
+    Array.from(document.querySelectorAll('.step[data-step]')).forEach(el => {
+        el.addEventListener('click', () => {
+            const n = Number(el.dataset.step);
+            if (n === 2) { setMode('trace'); $('btnCalibScale').click(); return; }
+            if (n === 6) {
+                const card = $('bakeCard');
+                if (card) {
+                    card.classList.remove('flash');
+                    void card.offsetWidth;
+                    card.classList.add('flash');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                toast('在右栏「导图」卡导出 / 上传到 HA');
+                return;
+            }
+            if (STEP_MODES[n]) { setMode(STEP_MODES[n]); }
+        });
+    });
+    function updateStepper() {
+        const m = state.mode;
+        const step = m === 'trace' ? 1
+            : (m === 'room' || m === 'opening' || m === 'wall') ? 3
+            : m === 'furniture' ? 4
+            : m === 'device' ? 5 : 3;
+        Array.from(document.querySelectorAll('.step[data-step]')).forEach(el => {
+            el.classList.toggle('on', Number(el.dataset.step) === step);
+        });
+    }
+    $('snapSelect').addEventListener('change', () => {
+        const tag = $('snapTag');
+        if (tag) { tag.textContent = '吸附: ' + $('snapSelect').value + 'cm'; }
+    });
+
     // ---------- 绑定 ----------
     Array.from(document.querySelectorAll('.mode-btn[data-mode]')).forEach(btn => {
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
@@ -5472,7 +5684,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.3.2)',
+            generator: '3d_JX 线条导出 (june-i v1.3.4)',
             camera: bakeCam,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
         };
@@ -5545,7 +5757,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.3.2)',
+            generator: '3d_JX 线条导出 (june-i v1.3.4)',
             camera: bakeCam,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
         };

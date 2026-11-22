@@ -9,6 +9,7 @@
     ① 界面配置（推荐，零代码）：设置 → 设备与服务 → 添加集成 → 搜「June.Ⅰ」→ 点添加
     ② yaml：configuration.yaml 加一行 `june_i:`，重启
 """
+import inspect
 import logging
 
 from homeassistant.core import HomeAssistant
@@ -48,40 +49,79 @@ async def _setup_hub(hass: HomeAssistant) -> None:
 
     # 侧边栏面板（iframe 指向编辑器）
     editor_url = "/june_i/editor/index.html"
-    registered = False
-    try:
-        hass.components.frontend.async_register_panel(
-            "iframe",
-            {"url": editor_url},
-            DOMAIN,
-            sidebar_title="户型编辑器",
-            sidebar_icon="mdi:floor-plan",
-        )
-        registered = True
-    except Exception:  # noqa: BLE001
-        LOGGER.warning("旧版面板注册失败，尝试新版 API", exc_info=True)
-    if not registered:
-        try:
-            from homeassistant.components import frontend
-
-            frontend.async_register_panel(
-                hass,
-                component_name="custom",
-                config={
-                    "component": "iframe",
-                    "panel_name": DOMAIN,
-                    "url": editor_url,
-                },
-                frontend_url_path=DOMAIN,
-                sidebar_title="户型编辑器",
-                sidebar_icon="mdi:floor-plan",
-            )
-        except Exception:  # noqa: BLE001
-            LOGGER.exception(
-                "侧边栏面板注册失败；编辑器仍可手动访问 %s", editor_url
-            )
+    await _register_panel(hass, editor_url)
 
     LOGGER.info("June.Ⅰ 户型中枢已启动（编辑器: %s）", editor_url)
+
+
+async def _register_panel(hass: HomeAssistant, editor_url: str) -> bool:
+    """注册侧边栏 iframe 面板。兼容新旧 HA：
+
+    ① frontend.async_register_built_in_panel —— 2023.x 起的现役 API（hassio 同款）
+    ② hass.components.frontend.async_register_panel —— 老版本（2025.x 已移除）
+    全部失败时发一条持久通知，避免“装了但没入口”无从排查。
+    """
+    title = "户型编辑器"
+    icon = "mdi:floor-plan"
+    errors = []
+
+    from homeassistant.components import frontend
+
+    reg_builtin = getattr(frontend, "async_register_built_in_panel", None)
+    if callable(reg_builtin):
+        try:
+            result = reg_builtin(
+                hass,
+                component_name="iframe",
+                sidebar_title=title,
+                sidebar_icon=icon,
+                frontend_url_path=DOMAIN,
+                config={"url": editor_url},
+                require_admin=False,
+            )
+            if inspect.isawaitable(result):
+                await result
+            LOGGER.info("侧边栏面板已注册（built_in API）: %s", editor_url)
+            return True
+        except Exception as err:  # noqa: BLE001
+            errors.append("built_in: %r" % (err,))
+
+    # 旧版兜底
+    legacy = getattr(getattr(hass, "components", None), "frontend", None) if hasattr(
+        hass, "components"
+    ) else None
+    reg_legacy = getattr(legacy, "async_register_panel", None) if legacy else None
+    if callable(reg_legacy):
+        try:
+            result = reg_legacy(
+                "iframe",
+                {"url": editor_url},
+                DOMAIN,
+                sidebar_title=title,
+                sidebar_icon=icon,
+            )
+            if inspect.isawaitable(result):
+                await result
+            LOGGER.info("侧边栏面板已注册（legacy API）: %s", editor_url)
+            return True
+        except Exception as err:  # noqa: BLE001
+            errors.append("legacy: %r" % (err,))
+
+    LOGGER.error("侧边栏面板注册失败：%s；可直接访问 %s", "; ".join(errors), editor_url)
+    try:
+        from homeassistant.components import persistent_notification
+
+        persistent_notification.async_create(
+            hass,
+            "「户型编辑器」侧边栏注册失败（%s）。"
+            "编辑器仍可直接访问：%s"
+            % ("; ".join(errors), editor_url),
+            title="June.Ⅰ 户型中枢",
+            notification_id="june_i_panel_failed",
+        )
+    except Exception:  # noqa: BLE001
+        LOGGER.exception("持久通知创建失败")
+    return False
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
