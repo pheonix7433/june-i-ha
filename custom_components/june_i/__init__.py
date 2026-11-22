@@ -38,20 +38,66 @@ async def _setup_hub(hass: HomeAssistant) -> None:
     hass.data[DOMAIN] = hub
 
     # 托管编辑器（单文件 3d_JX.html → editor/index.html）
-    editor_dir = str(__import__("pathlib").Path(__file__).parent / "editor")
-    try:
-        hass.http.register_static_path("/june_i/editor", editor_dir, cache_headers=False)
-    except Exception:  # noqa: BLE001
-        LOGGER.exception("编辑器静态路径注册失败")
+    editor_url = await _register_editor_static(hass)
+    if editor_url is None:
+        editor_url = "/june_i/editor/index.html"  # 注册失败也要给出面板地址
 
     # API 视图（/api/june_i/house、/api/june_i/render、/api/june_i/media/{name}）
     setup_http(hass, hub)
 
     # 侧边栏面板（iframe 指向编辑器）
-    editor_url = "/june_i/editor/index.html"
     await _register_panel(hass, editor_url)
 
     LOGGER.info("June.Ⅰ 户型中枢已启动（编辑器: %s）", editor_url)
+
+
+async def _register_editor_static(hass: HomeAssistant):
+    """注册编辑器静态目录，返回可用的编辑器地址；失败发通知并返回 None。
+
+    新版 HA（2024.6+）用 async_register_static_paths；
+    2025.x 已彻底移除旧的 hass.http.register_static_path，
+    若还调旧方法会 AttributeError 导致编辑器 404（iframe 里显示 HA 登录页）。
+    """
+    import pathlib
+
+    editor_dir = str(pathlib.Path(__file__).parent / "editor")
+    url_path = "/june_i/editor"
+
+    # ① 现役 API：2024.6+
+    try:
+        from homeassistant.components.http import StaticPathConfig
+
+        await hass.http.async_register_static_paths(
+            [StaticPathConfig(url_path, editor_dir, False)]
+        )
+        LOGGER.info("编辑器静态路径已注册（async_register_static_paths）: %s", url_path)
+        return url_path + "/index.html"
+    except ImportError:
+        pass  # 老版本没有这个 API，走下面的兜底
+    except Exception:  # noqa: BLE001
+        LOGGER.exception("编辑器静态路径注册失败（新 API）")
+
+    # ② 旧版兜底：2024.6 之前
+    try:
+        hass.http.register_static_path(url_path, editor_dir, cache_headers=False)
+        LOGGER.info("编辑器静态路径已注册（legacy register_static_path）: %s", url_path)
+        return url_path + "/index.html"
+    except Exception:  # noqa: BLE001
+        LOGGER.exception("编辑器静态路径注册失败（legacy API）")
+
+    try:
+        from homeassistant.components import persistent_notification
+
+        persistent_notification.async_create(
+            hass,
+            "编辑器静态文件注册失败，侧边栏打开会是 HA 登录页。"
+            "请确认 HA 版本 ≥ 2024.6 并重启后再试，或反馈完整日志。",
+            title="June.Ⅰ 户型中枢",
+            notification_id="june_i_static_failed",
+        )
+    except Exception:  # noqa: BLE001
+        LOGGER.exception("持久通知创建失败")
+    return None
 
 
 async def _register_panel(hass: HomeAssistant, editor_url: str) -> bool:
