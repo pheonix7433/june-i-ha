@@ -1,12 +1,17 @@
 {
   "domain": "june_i",
   "name": "June.Ⅰ 户型中枢",
-  "codeowners": ["@sunlong"],
-  "config_flow": false,
-  "dependencies": ["http", "frontend"],
+  "codeowners": [
+    "@sunlong"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "frontend"
+  ],
   "documentation": "https://github.com/local/june-i",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/local/june-i/issues",
   "requirements": [],
-  "version": "1.3.1"
+  "version": "1.3.3"
 }

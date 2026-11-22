@@ -1,0 +1,13 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "June.Ⅰ 户型中枢",
+                "description": "点击「提交」即可启用：自动在侧边栏添加「户型编辑器」，并托管 house.json 与预渲染图供小程序拉取。无需填写任何内容。"
+            }
+        },
+        "abort": {
+            "already_configured": "June.Ⅰ 已配置过，无需重复添加。"
+        }
+    }
+}
