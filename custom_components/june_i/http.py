@@ -17,7 +17,7 @@ from homeassistant.components.http import HomeAssistantView
 
 SAFE_NAME = re.compile(r"^[A-Za-z0-9._-]{1,80}$")
 MAX_FILE_BYTES = 3 * 1024 * 1024  # 单个媒体文件上限（渲染图/特效帧几十 KB，远够）
-MAX_FILES = 200  # 总览图 + 每房间 9 张特效关键帧（10 房 ≈ 91 张，留足余量）
+MAX_FILES = 400  # 总览图 + 每房间 17 张特效关键帧（16 帧 + 收尾，10 房 ≈ 154 张，留足余量）
 
 # 诊断日志环形缓冲（仅内存，HA 重启即清空）：编辑器「日志」面板读取
 LOG_MAX = 800

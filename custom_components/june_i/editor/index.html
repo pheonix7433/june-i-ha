@@ -467,7 +467,7 @@
     <div class="topbar">
         <div class="brand">
             <div class="t"><b>June.Ⅰ·3D户型编辑器</b></div>
-            <span class="ver-tag" id="verTag">v1.4.7</span>
+            <span class="ver-tag" id="verTag">v1.4.9</span>
         </div>
 
         <div class="spacer"></div>
@@ -6381,7 +6381,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.7)',
+            generator: '3d_JX 线条导出 (june-i v1.4.9)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut).length ? genViewsOut : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
@@ -6392,7 +6392,7 @@ return module.exports;
     // ---------- 房间生成特效关键帧（小程序进房间时连播） ----------
     // 每个房间烘 N 帧（特效前 CAD → 相机飞进 → 地板淡入 → 墙生长 → 家具落位 → 收尾）
     // + 一张灯全开收尾帧（小程序按实时灯态挑结尾帧）。机位用户型里存的 genViews。
-    const ANIM_FRAME = { N: 8, MS: 110, W: 720, H: 540 };
+    const ANIM_FRAME = { N: 16, MS: 90, W: 720, H: 540 };
 
     function cvToDataUrl(cv, mime) {
         return new Promise(resolve => {
@@ -6558,7 +6558,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.7)',
+            generator: '3d_JX 线条导出 (june-i v1.4.9)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut2).length ? genViewsOut2 : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
