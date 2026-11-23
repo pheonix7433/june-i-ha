@@ -467,7 +467,7 @@
     <div class="topbar">
         <div class="brand">
             <div class="t"><b>June.Ⅰ·3D户型编辑器</b></div>
-            <span class="ver-tag" id="verTag">v1.4.6</span>
+            <span class="ver-tag" id="verTag">v1.4.7</span>
         </div>
 
         <div class="spacer"></div>
@@ -526,6 +526,15 @@
                     <p class="hint">每台设备可<b>绑定房间</b>（灯态/小程序分区优先按绑定）并控制<b>前端显示</b>；未绑定按画布位置判定。设置随户型保存。</p>
                     <div id="deviceProps"></div>
                 </div>
+
+                <div id="panelAuto" style="display:none" class="card">
+                    <div class="card-title"><span class="zh">自动化</span><span class="ext" id="autoCount">0</span></div>
+                    <div class="btn-row" style="margin-bottom:10px">
+                        <button class="btn small accent" id="btnFetchAutos">拉取自动化</button>
+                    </div>
+                    <p class="hint">从 HA 拉取自动化列表，<b>勾选</b>的会出现在小程序「自动化」页；还没勾选过时全部显示。地址和令牌用「设备」面板里填的那套，设置随户型保存。</p>
+                    <div class="list" id="autoList"></div>
+                </div>
             </div>
         </div>
 
@@ -538,6 +547,7 @@
                     <button class="mode-btn" data-mode="opening"><span>门窗</span></button>
                     <button class="mode-btn" data-mode="furniture"><span>家具</span></button>
                     <button class="mode-btn" data-mode="device"><span>设备</span></button>
+                    <button class="mode-btn" data-mode="auto"><span>自动化</span></button>
                 </div>
                 <div class="spacer" style="flex:1"></div>
                 <div class="tool-group">
@@ -1050,6 +1060,16 @@ function normalizeHouse(house) {
             }
             if (Object.keys(out).length > 0) {
                 base.deviceSettings[entityId] = out;
+            }
+        });
+    }
+    // 自动化显隐（编辑器「自动化」面板勾选，随户型走）：
+    // { [entityId]: true } —— 只存勾选要在小程序显示的；空/缺省 = 全部显示
+    base.autoSettings = {};
+    if (house.autoSettings && typeof house.autoSettings === 'object') {
+        Object.keys(house.autoSettings).forEach(entityId => {
+            if (typeof entityId === 'string' && entityId && house.autoSettings[entityId] === true) {
+                base.autoSettings[entityId] = true;
             }
         });
     }
@@ -2789,8 +2809,8 @@ return module.exports;
         light: '灯光', climate: '空调', fan: '风扇', cover: '窗帘', media_player: '影音',
     };
     const SUPPORTED = Object.keys(DOMAIN_TITLES);
-    const MODES = ['room', 'wall', 'opening', 'furniture', 'device'];
-    const MODE_NAMES = { room: '房间', opening: '门窗', wall: '墙体', furniture: '家具', device: '设备', trace: '底图' };
+    const MODES = ['room', 'wall', 'opening', 'furniture', 'device', 'auto'];
+    const MODE_NAMES = { room: '房间', opening: '门窗', wall: '墙体', furniture: '家具', device: '设备', auto: '自动化', trace: '底图' };
     const ON_STATES = ['on', 'open', 'open_open', 'playing', 'heating', 'cooling', 'heat', 'cool', 'auto'];
 
     const state = {
@@ -2805,6 +2825,7 @@ return module.exports;
         devices: [],
         liveStates: {},
         deviceFilter: '',
+        autos: [],
         view: { scale: 0.25, ox: 40, oy: 40 },
         cam: { tx: 0, tz: 0, yaw: -35, pitch: 55, dist: 8 },
         snapGrid: 10,
@@ -4538,6 +4559,46 @@ return module.exports;
         } else if (shown.length === 0) {
             list.innerHTML = '<div class="hint">没有匹配「' + state.deviceFilter + '」的设备</div>';
         }
+
+        // 自动化列表（自动化模式）：勾选 = 在小程序「自动化」页显示
+        const autoList = $('autoList');
+        if (autoList) {
+            autoList.innerHTML = '';
+            $('autoCount').textContent = String(state.autos.length);
+            const marks = state.house.autoSettings || {};
+            state.autos.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'list-item dev-row auto-row';
+                row.innerHTML = '<div class="dev-main"><span class="name"></span><span class="dim"></span></div>'
+                    + '<label class="dev-show"><input type="checkbox">小程序显示</label>';
+                row.querySelector('.name').textContent = item.name;
+                row.querySelector('.dim').textContent = item.state === 'off' ? '已停用' : item.lastTriggered || '';
+                const chk = row.querySelector('.dev-show input');
+                chk.checked = marks[item.entityId] === true;
+                chk.addEventListener('change', () => {
+                    setAutoSetting(item.entityId, chk.checked);
+                });
+                autoList.appendChild(row);
+            });
+            if (state.autos.length === 0) {
+                autoList.innerHTML = '<div class="hint">点上方「拉取自动化」从 HA 读自动化列表</div>';
+            }
+        }
+    }
+
+    // 写入自动化显隐（house.autoSettings），随户型保存/上传 HA / 小程序同步
+    function setAutoSetting(entityId, on) {
+        if (!state.house.autoSettings || typeof state.house.autoSettings !== 'object') {
+            state.house.autoSettings = {};
+        }
+        if (on) {
+            state.house.autoSettings[entityId] = true;
+        } else {
+            delete state.house.autoSettings[entityId];
+        }
+        edLog('auto', (on ? '显示' : '隐藏') + ' ' + entityId + '（小程序自动化页）');
+        pushHistory();
+        renderPanels();
     }
 
     // 写入设备绑定（house.deviceSettings），随户型保存/上传 HA / 小程序同步
@@ -4578,6 +4639,9 @@ return module.exports;
         canvas.style.cursor = (mode === 'room' || mode === 'opening') ? 'crosshair' : '';
         draw();
         renderProps();
+        if (mode === 'auto') {
+            renderPanels();
+        }
     }
 
     // ---------- 属性面板 ----------
@@ -5032,6 +5096,7 @@ return module.exports;
         wall: '点画布上的墙选中，左栏可调宽窄、高度、颜色、透明度。',
         furniture: '左侧选家具类型，点画布放置；Ctrl+D 复制。',
         device: '选设备后点画布标位置；左栏可绑房间、控制前端显示；灯按 HA 实时状态显示光斑。',
+        auto: '点「拉取自动化」从 HA 读列表，勾选的会出现在小程序「自动化」页。',
     };
 
     function afterGeometryChange() {
@@ -5891,6 +5956,40 @@ return module.exports;
         toast('已选中，点画布放置');
     }
 
+    // 拉取 HA 自动化列表（自动化面板）
+    async function fetchAutomations() {
+        const base = haBase();
+        const token = haToken();
+        if (!base || !token) {
+            toast('先在「设备」面板填 HA 地址和长期访问令牌');
+            return;
+        }
+        try {
+            const res = await fetch(base + '/api/states', {
+                headers: { Authorization: 'Bearer ' + token },
+            });
+            if (!res.ok) {
+                throw new Error('HTTP ' + res.status);
+            }
+            const list = await res.json();
+            state.autos = list
+                .filter(item => String(item.entity_id).indexOf('automation.') === 0)
+                .map(item => ({
+                    entityId: item.entity_id,
+                    name: (item.attributes && item.attributes.friendly_name) || item.entity_id,
+                    state: String(item.state),
+                    lastTriggered: (item.attributes && item.attributes.last_triggered) || '',
+                }))
+                .sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+            renderPanels();
+            edLog('ha', '已拉取 ' + state.autos.length + ' 个自动化');
+            toast('已拉取 ' + state.autos.length + ' 个自动化');
+        } catch (e) {
+            edLog('err', '拉取自动化失败：' + e.message);
+            toast('拉取失败：' + e.message);
+        }
+    }
+
     // ---------- 底图 ----------
     function loadTraceFile(file) {
         const reader = new FileReader();
@@ -5967,6 +6066,7 @@ return module.exports;
 
     $('btnFetchDevices').addEventListener('click', fetchDevices);
     $('btnAddDevice').addEventListener('click', addDeviceManually);
+    $('btnFetchAutos').addEventListener('click', fetchAutomations);
     if ($('deviceFilter')) {
         $('deviceFilter').addEventListener('input', () => {
             state.deviceFilter = $('deviceFilter').value.trim();
@@ -6281,7 +6381,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.6)',
+            generator: '3d_JX 线条导出 (june-i v1.4.7)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut).length ? genViewsOut : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
@@ -6458,7 +6558,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.6)',
+            generator: '3d_JX 线条导出 (june-i v1.4.7)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut2).length ? genViewsOut2 : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
