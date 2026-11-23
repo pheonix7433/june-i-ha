@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>June.Ⅰ · 户型与庭院绘制</title>
+<title>June.Ⅰ · 3D户型</title>
 <style>
     * { box-sizing: border-box; }
     html, body {
@@ -11,7 +11,7 @@
         height: 100%;
         font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
         color: #dbe2ec;
-        background: #0b0e13;
+        background: #212b39;
         overflow: hidden;
     }
     button { font-family: inherit; cursor: pointer; }
@@ -24,23 +24,13 @@
         align-items: center;
         gap: 10px;
         padding: 7px 14px;
-        background: #0d1117;
-        border-bottom: 1px solid #1e2530;
+        background: #26313f;
+        border-bottom: 1px solid #3a4859;
         flex-shrink: 0;
     }
-    .brand { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
-    .brand .logo {
-        width: 30px; height: 30px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #f0a03c, #d97706);
-        color: #14100a;
-        font-weight: 800; font-size: 13px;
-        display: flex; align-items: center; justify-content: center;
-        letter-spacing: 0.5px;
-    }
-    .brand .t { line-height: 1.15; }
-    .brand .t b { display: block; font-size: 14px; color: #eef3fa; letter-spacing: 1px; }
-    .brand .t small { display: block; font-size: 9.5px; color: #5b6779; letter-spacing: 2.2px; font-weight: 600; }
+    .brand { display: flex; align-items: center; flex-shrink: 0; }
+    .brand .t b { display: block; font-size: 16.5px; color: #f2f6fc; letter-spacing: 1.5px; font-weight: 700; }
+    .ver-tag { font-size: 12px; color: #8fa0b5; font-variant-numeric: tabular-nums; flex-shrink: 0; }
 
     .steps { display: flex; align-items: center; gap: 2px; margin-left: 10px; flex-shrink: 0; }
     .step {
@@ -63,14 +53,14 @@
     .step.on .n { background: #39c6f4; border-color: #39c6f4; color: #06222e; font-weight: 700; }
     .step-link { width: 14px; height: 1px; background: #252e3b; flex-shrink: 0; }
 
-    .topbar .sep { width: 1px; height: 20px; background: #232c38; margin: 0 3px; flex-shrink: 0; }
+    .topbar .sep { width: 1px; height: 20px; background: #445367; margin: 0 3px; flex-shrink: 0; }
     .topbar .spacer { flex: 1; }
     .save-tag { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #6f7d8f; flex-shrink: 0; }
     .save-tag .dot { width: 7px; height: 7px; border-radius: 50%; background: #38b26f; box-shadow: 0 0 6px rgba(56, 178, 111, 0.6); }
 
     .btn {
         border: 1px solid #2a3442;
-        background: #171d26;
+        background: #323f4e;
         color: #c7d1e0;
         border-radius: 8px;
         padding: 6px 12px;
@@ -87,7 +77,7 @@
     .btn.danger:hover { background: #2e2121; }
     .btn.small { padding: 4px 9px; font-size: 12px; }
     .btn.ghost { background: transparent; border-color: transparent; color: #8a94a6; }
-    .btn.ghost:hover { background: #1a212b; color: #dbe2ec; }
+    .btn.ghost:hover { background: #364353; color: #dbe2ec; }
 
     .main { flex: 1; display: flex; min-height: 0; }
 
@@ -95,8 +85,8 @@
     .sidebar {
         width: 236px;
         flex-shrink: 0;
-        background: #0d1117;
-        border-right: 1px solid #1e2530;
+        background: #26313f;
+        border-right: 1px solid #3a4859;
         padding: 10px;
         display: flex;
         flex-direction: column;
@@ -113,8 +103,8 @@
         gap: 8px;
     }
     .card {
-        background: #12161d;
-        border: 1px solid #1e2530;
+        background: #2d3947;
+        border: 1px solid #3a4859;
         border-radius: 11px;
         padding: 11px 12px;
     }
@@ -127,7 +117,7 @@
     .card-title .ext { margin-left: auto; font-size: 11px; color: #6f7d8f; font-variant-numeric: tabular-nums; }
     .card.flash { animation: flashCard 1.2s ease; }
     @keyframes flashCard {
-        0%, 100% { border-color: #1e2530; box-shadow: none; }
+        0%, 100% { border-color: #3a4859; box-shadow: none; }
         25% { border-color: #f0a03c; box-shadow: 0 0 0 2px rgba(240, 160, 60, 0.25); }
         60% { border-color: #f0a03c; box-shadow: 0 0 0 2px rgba(240, 160, 60, 0.18); }
     }
@@ -139,7 +129,7 @@
         letter-spacing: 1px;
     }
     .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
-    .mode-grid .mode-btn { border: 1px solid #222a36; background: #171d26; justify-content: center; }
+    .mode-grid .mode-btn { border: 1px solid #405062; background: #323f4e; justify-content: center; }
     .mode-grid .mode-btn.on { background: #17253e; }
 
     /* ---------- 中部：画布 ---------- */
@@ -148,15 +138,15 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        background: #0e1218;
+        background: #2a3644;
     }
     .canvas-toolbar {
         display: flex;
         align-items: center;
         gap: 8px;
         padding: 7px 10px;
-        border-bottom: 1px solid #1e2530;
-        background: #0d1117;
+        border-bottom: 1px solid #3a4859;
+        background: #26313f;
         overflow-x: auto;
         scrollbar-width: none;
         flex-shrink: 0;
@@ -165,7 +155,7 @@
     .tool-group .g-label { font-size: 10.5px; color: #55637a; font-weight: 700; letter-spacing: 1px; margin: 0 4px 0 2px; white-space: nowrap; }
     .tool-group .g-label.cyan { color: #39c6f4; }
     .tool-group .g-label.orange { color: #f0a03c; }
-    .tool-sep { width: 1px; height: 18px; background: #232c38; margin: 0 5px; flex-shrink: 0; }
+    .tool-sep { width: 1px; height: 18px; background: #445367; margin: 0 5px; flex-shrink: 0; }
     .mode-btn {
         display: flex;
         align-items: center;
@@ -186,7 +176,7 @@
         border: 1px solid #2a3442;
         border-radius: 4px;
         padding: 0 4px;
-        background: #10151d;
+        background: #242f3d;
     }
     .mode-btn.on .kbd { color: #9db9ee; border-color: #3c5ea6; }
 
@@ -198,8 +188,8 @@
         top: 10px;
         font-size: 11.5px;
         color: #77828f;
-        background: rgba(13, 17, 23, 0.85);
-        border: 1px solid #1e2530;
+        background: rgba(33, 43, 57, 0.9);
+        border: 1px solid #3a4859;
         border-radius: 7px;
         padding: 5px 10px;
         pointer-events: none;
@@ -212,8 +202,8 @@
         top: 12px;
         font-size: 11px;
         color: #6d7889;
-        background: rgba(13, 17, 23, 0.85);
-        border: 1px solid #1e2530;
+        background: rgba(33, 43, 57, 0.9);
+        border: 1px solid #3a4859;
         border-radius: 6px;
         padding: 3px 8px;
         pointer-events: none;
@@ -230,7 +220,7 @@
     .stage-tools .btn {
         width: 40px; height: 32px; padding: 0;
         font-size: 13px; text-align: center;
-        background: rgba(23, 29, 38, 0.92);
+        background: rgba(44, 55, 71, 0.95);
     }
 
     .statusbar {
@@ -238,8 +228,8 @@
         align-items: center;
         gap: 14px;
         padding: 5px 12px;
-        border-top: 1px solid #1e2530;
-        background: #0d1117;
+        border-top: 1px solid #3a4859;
+        background: #26313f;
         font-size: 11.5px;
         color: #7d8898;
         font-variant-numeric: tabular-nums;
@@ -252,8 +242,8 @@
     .panel-right {
         width: 342px;
         flex-shrink: 0;
-        background: #0d1117;
-        border-left: 1px solid #1e2530;
+        background: #26313f;
+        border-left: 1px solid #3a4859;
         padding: 10px;
         overflow-y: auto;
         display: flex;
@@ -282,13 +272,23 @@
         gap: 8px;
         padding: 6px 9px;
         border-radius: 7px;
-        background: #171d26;
-        border: 1px solid #222a36;
+        background: #323f4e;
+        border: 1px solid #405062;
         font-size: 12.5px;
         cursor: pointer;
     }
     .list-item:hover { border-color: #344152; }
     .list-item.on { border-color: #2c4f8f; background: #17253e; }
+    /* 设备卡：上行名称/状态，下行房间绑定 + 前端显示 */
+    .dev-row { flex-direction: column; align-items: stretch; gap: 5px; padding: 7px 9px; }
+    .dev-row .dev-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .dev-row .dev-sub { display: flex; align-items: center; gap: 8px; }
+    .dev-row .dev-room {
+        flex: 1; min-width: 0; font-size: 11.5px; padding: 3px 5px;
+        background: #28323e; color: #c3cddc; border: 1px solid #405062; border-radius: 5px;
+    }
+    .dev-row .dev-show { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: #8fa0b6; cursor: pointer; white-space: nowrap; }
+    .dev-row .dev-show input { accent-color: #5b8dff; }
     .list-item .dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
     .list-item .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .list-item .dim { color: #6d7889; font-size: 11px; font-variant-numeric: tabular-nums; }
@@ -296,8 +296,8 @@
 
     .furn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
     .furn-btn {
-        border: 1px solid #222a36;
-        background: #171d26;
+        border: 1px solid #405062;
+        background: #323f4e;
         border-radius: 7px;
         padding: 8px 0;
         font-size: 12px;
@@ -307,31 +307,31 @@
     .furn-btn.on { background: #17253e; border-color: #2c4f8f; color: #fff; }
     .search-box {
         width: 100%;
-        border: 1px solid #222a36;
+        border: 1px solid #405062;
         border-radius: 7px;
         padding: 6px 9px;
         font-size: 12px;
         color: #dbe2ec;
-        background: #10151d;
+        background: #242f3d;
         margin-bottom: 7px;
     }
     .search-box:focus { outline: none; border-color: #2c4f8f; }
 
     .hint { font-size: 11.5px; color: #77828f; line-height: 1.7; margin: 8px 0 0; }
     .hint b { color: #aeb9c9; font-weight: 500; }
-    .divider { height: 1px; background: #1e2530; margin: 9px 0; }
+    .divider { height: 1px; background: #3a4859; margin: 9px 0; }
 
     .field { display: flex; gap: 6px; margin-bottom: 6px; }
     .field label { font-size: 12px; color: #77828f; width: 52px; flex-shrink: 0; line-height: 29px; }
     input[type="text"], input[type="password"], input[type="number"], select {
         flex: 1;
         min-width: 0;
-        border: 1px solid #222a36;
+        border: 1px solid #405062;
         border-radius: 7px;
         padding: 6px 8px;
         font-size: 12px;
         color: #dbe2ec;
-        background: #10151d;
+        background: #242f3d;
         font-family: inherit;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #3565e0; }
@@ -340,7 +340,7 @@
     .swatch {
         width: 22px; height: 22px;
         border-radius: 6px;
-        border: 2px solid #171d26;
+        border: 2px solid #323f4e;
         box-shadow: 0 0 0 1px #2a3442;
         cursor: pointer;
     }
@@ -351,8 +351,8 @@
         height: 235px;
         border-radius: 10px;
         overflow: hidden;
-        background: #0e1218;
-        border: 1px solid #1e2530;
+        background: #000;
+        border: 1px solid #1c242e;
         cursor: grab;
     }
     #preview3d { display: block; width: 100%; height: 100%; }
@@ -362,23 +362,23 @@
         top: 8px;
         font-size: 11px;
         color: #9aa6b5;
-        background: rgba(13, 17, 23, 0.82);
-        border: 1px solid #1e2530;
+        background: rgba(33, 43, 57, 0.88);
+        border: 1px solid #3a4859;
         border-radius: 5px;
         padding: 2px 7px;
         pointer-events: none;
     }
 
-    .seg { display: flex; border: 1px solid #222a36; border-radius: 8px; overflow: hidden; }
+    .seg { display: flex; border: 1px solid #405062; border-radius: 8px; overflow: hidden; }
     .seg button {
         flex: 1;
         border: none;
-        background: #12171f;
+        background: #293544;
         color: #8a94a6;
         padding: 6px 0;
         font-size: 12px;
     }
-    .seg button + button { border-left: 1px solid #222a36; }
+    .seg button + button { border-left: 1px solid #405062; }
     .seg button.on { background: #17253e; color: #fff; }
 
     .check-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #9aa6b5; }
@@ -393,8 +393,8 @@
     .btn-row .btn { flex: 1; }
 
     .stats-box {
-        background: #10151d;
-        border: 1px solid #1e2530;
+        background: #242f3d;
+        border: 1px solid #3a4859;
         border-radius: 8px;
         padding: 7px 10px;
         font-size: 11.5px;
@@ -409,7 +409,7 @@
         left: 50%;
         bottom: 40px;
         transform: translateX(-50%);
-        background: rgba(30, 37, 48, 0.96);
+        background: rgba(47, 59, 76, 0.97);
         border: 1px solid #3a4557;
         color: #e6ecf4;
         font-size: 12.5px;
@@ -424,86 +424,57 @@
     .toast.show { opacity: 1; }
 
     dialog {
-        border: 1px solid #222a36;
+        border: 1px solid #405062;
         border-radius: 12px;
         padding: 0;
-        background: #12161d;
+        background: #2d3947;
         color: #dbe2ec;
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
         width: 540px;
         max-width: 92vw;
     }
-    dialog::backdrop { background: rgba(4, 6, 9, 0.65); }
-    dialog .dlg-head { padding: 13px 18px; border-bottom: 1px solid #1e2530; font-weight: 600; font-size: 13.5px; }
+    dialog::backdrop { background: rgba(10, 14, 20, 0.6); }
+    dialog .dlg-head { padding: 13px 18px; border-bottom: 1px solid #3a4859; font-weight: 600; font-size: 13.5px; }
     dialog .dlg-body { padding: 14px 18px; }
     dialog textarea {
         width: 100%;
         height: 250px;
-        border: 1px solid #222a36;
+        border: 1px solid #405062;
         border-radius: 8px;
         padding: 10px;
         font-family: ui-monospace, Consolas, monospace;
         font-size: 12px;
         line-height: 1.5;
         resize: vertical;
-        background: #0b0e13;
+        background: #212b39;
         color: #c7d1e0;
     }
-    dialog .dlg-foot { padding: 12px 18px; border-top: 1px solid #1e2530; display: flex; justify-content: flex-end; gap: 8px; }
-    .bake-preview {
-        display: block;
-        width: 100%;
-        max-height: 168px;
-        object-fit: contain;
-        border: 1px solid #222a36;
-        border-radius: 8px;
-        background: #e9eef4;
+    dialog .dlg-foot { padding: 12px 18px; border-top: 1px solid #3a4859; display: flex; justify-content: flex-end; gap: 8px; }
+    /* 运行日志面板 */
+    dialog#logDlg { width: 720px; }
+    dialog#logDlg textarea { height: 380px; white-space: pre; }
+    .log-tabs { display: inline-flex; gap: 6px; margin-left: 12px; vertical-align: middle; }
+    .log-tabs .btn.on { border-color: #2c4f8f; background: #17253e; color: #9ec2ff; }
+    .bake-stage {
+        height: 205px;
+        cursor: default;
     }
+    #bakeStage { display: block; width: 100%; height: 100%; }
 </style>
 </head>
 <body>
 <div id="app">
     <div class="topbar">
         <div class="brand">
-            <div class="logo">J1</div>
-            <div class="t">
-                <b>户型与庭院绘制</b>
-                <small>JUNE.Ⅰ · DESKTOP CREATOR · v1.3.5</small>
-            </div>
-        </div>
-
-        <div class="steps">
-            <button class="step" data-step="1"><span class="n">1</span>导入底图</button>
-            <span class="step-link"></span>
-            <button class="step" data-step="2"><span class="n">2</span>标定比例</button>
-            <span class="step-link"></span>
-            <button class="step on" data-step="3"><span class="n">3</span>绘制空间</button>
-            <span class="step-link"></span>
-            <button class="step" data-step="4"><span class="n">4</span>摆放物件</button>
-            <span class="step-link"></span>
-            <button class="step" data-step="5"><span class="n">5</span>放置灯光</button>
-            <span class="step-link"></span>
-            <button class="step" data-step="6"><span class="n">6</span>应用户型</button>
+            <div class="t"><b>June.Ⅰ·3D户型编辑器</b></div>
+            <span class="ver-tag" id="verTag">v1.4.5</span>
         </div>
 
         <div class="spacer"></div>
         <div class="save-tag"><span class="dot"></span><span id="saveTag">自动保存已开启</span></div>
         <div class="sep"></div>
-        <button class="btn small" id="btnUndo" title="Ctrl+Z">撤销</button>
-        <button class="btn small" id="btnRedo" title="Ctrl+Y">重做</button>
-        <select id="snapSelect" style="width:96px;flex:none" title="吸附精度">
-            <option value="1">吸附 1cm</option>
-            <option value="10" selected>吸附 10cm</option>
-            <option value="50">吸附 50cm</option>
-        </select>
+        <button class="btn small" id="btnLogs" title="编辑器与小程序运行日志（排查问题用）">日志</button>
         <div class="sep"></div>
-        <button class="btn small" id="btnLoadHA" title="从 HA 户型中枢读取">读 HA</button>
-        <button class="btn small" id="btnOpenFile">打开</button>
-        <button class="btn small" id="btnPaste">粘贴</button>
-        <button class="btn small" id="btnCopy">复制</button>
-        <button class="btn small" id="btnSample">示例</button>
-        <button class="btn small ghost danger" id="btnClear">清空</button>
-        <button class="btn small" id="btnSaveFile" title="下载 house.json">下载</button>
         <button class="btn primary small" id="btnSaveHA" title="存到 HA 户型中枢，小程序自动拉取">存到 HA</button>
     </div>
 
@@ -511,56 +482,49 @@
         <!-- 左栏：按模式显示的上下文面板 + 常显模型库 -->
         <div class="sidebar">
             <div class="side-scroll">
-                <div id="panelTrace" style="display:none" class="card">
-                    <div class="card-title"><span class="en">BASEMAP</span><span class="zh">户型底图</span></div>
-                    <div class="btn-row">
-                        <button class="btn small primary" id="btnPickTrace">导入</button>
-                        <button class="btn small" id="btnCalibScale">标比例尺</button>
-                    </div>
-                    <div class="slider-row"><label>透明</label><input type="range" id="traceOpacity" min="0.1" max="0.9" step="0.05" value="0.35"><span class="val" id="traceOpacityVal">35%</span></div>
-                    <div class="btn-row">
-                        <button class="btn small danger" id="btnTraceRemove">移除底图</button>
-                    </div>
-                    <p class="hint">① 上传你家户型图（自动压缩存储）② 点「标比例尺」，在图上点一段已知长度的墙两端，输入实际距离 ③ 拖动底图对齐，照着描。</p>
-                </div>
-
-                <div id="panelOpening" style="display:none" class="card">
-                    <div class="card-title"><span class="en">OPENINGS</span><span class="zh">门窗</span></div>
-                    <div class="mode-grid" style="margin-bottom:8px">
-                        <button class="mode-btn on" data-open="door"><span>放门</span><span class="kbd">D</span></button>
-                        <button class="mode-btn" data-open="window"><span>放窗</span><span class="kbd">W</span></button>
-                    </div>
-                    <p class="hint">在房间墙线附近点一下放置，有虚影预览；按住拖动沿墙滑；<b>[</b> <b>]</b> 调宽窄；门画开向弧线，窗是双线。</p>
+                <div id="panelRoom" class="card">
+                    <div class="card-title"><span class="zh">房间</span><span class="ext" id="roomCount">0</span></div>
+                    <div class="list" id="roomList"></div>
+                    <p class="hint">点列表或画布选中房间，下方可改名称、位置、尺寸和颜色。</p>
+                    <div id="roomProps"></div>
                 </div>
 
                 <div id="panelWall" style="display:none" class="card">
-                    <div class="card-title"><span class="en">WALLS</span><span class="zh">墙体样式</span></div>
-                    <p class="hint">点<b>两个房间共用</b>的墙线，在三种样式间循环：</p>
-                    <div class="list">
-                        <div class="list-item"><span class="name">常规墙</span><span class="dim">默认 · 全高</span></div>
-                        <div class="list-item"><span class="name" style="color:#e0902a">矮墙</span><span class="dim">45cm 半墙</span></div>
-                        <div class="list-item"><span class="name" style="color:#38b26f">打通</span><span class="dim">开放式，不渲染</span></div>
+                    <div class="card-title"><span class="zh">墙体</span></div>
+                    <p class="hint">点画布上的墙选中，可调宽窄、高度、颜色、透明度。</p>
+                    <div id="wallProps"></div>
+                </div>
+
+                <div id="panelOpening" style="display:none" class="card">
+                    <div class="card-title"><span class="zh">门窗</span></div>
+                    <div class="mode-grid" style="margin-bottom:8px">
+                        <button class="mode-btn" data-open="door"><span>放门</span></button>
+                        <button class="mode-btn" data-open="window"><span>放窗</span></button>
                     </div>
-                    <p class="hint">外墙自动加厚（24cm），内墙 20cm；门窗会在墙上开真实的洞。</p>
+                    <p class="hint">默认直接点画布上的门窗改属性；点「放门 / 放窗」后再点墙线添加。</p>
+                    <div id="openingProps"></div>
+                </div>
+
+                <div id="panelFurniture" style="display:none" class="card">
+                    <div class="card-title"><span class="zh">模型库</span></div>
+                    <input type="text" class="search-box" id="furnSearch" placeholder="搜索模型…" />
+                    <div class="furn-grid" id="furnGrid"></div>
+                    <p class="hint">选类型后画布上出现虚影，点一下落位；拖动移动，<b>R</b> 旋转，<b>Ctrl+D</b> 复制。</p>
+                    <div id="furnProps"></div>
                 </div>
 
                 <div id="panelDevice" style="display:none" class="card">
-                    <div class="card-title"><span class="en">DEVICES</span><span class="zh">设备与灯光</span><span class="ext" id="deviceCount">0</span></div>
+                    <div class="card-title"><span class="zh">设备与灯光</span><span class="ext" id="deviceCount">0</span></div>
                     <div class="field"><label>地址</label><input type="text" id="haUrl" placeholder="http://192.168.110.57:8123" /></div>
                     <div class="field"><label>令牌</label><input type="password" id="haToken" placeholder="长期访问令牌" /></div>
                     <div class="btn-row" style="margin-bottom:10px">
                         <button class="btn small accent" id="btnFetchDevices">拉取设备</button>
                         <button class="btn small" id="btnAddDevice">手动添加</button>
                     </div>
+                    <input type="text" class="search-box" id="deviceFilter" placeholder="搜索实体 id 或名称…" style="margin-bottom:8px" />
                     <div class="list" id="deviceList"></div>
-                    <p class="hint">灯可先「拉取设备」再放置：3D 里按 HA 实时状态显示光斑；选中设备后在右侧存它的聚焦机位。</p>
-                </div>
-
-                <div id="panelFurniture" class="card">
-                    <div class="card-title"><span class="en">OBJECTS</span><span class="zh">模型库</span></div>
-                    <input type="text" class="search-box" id="furnSearch" placeholder="搜索模型…" />
-                    <div class="furn-grid" id="furnGrid"></div>
-                    <p class="hint">选类型后画布上出现虚影，点一下落位；拖动移动，<b>R</b> 旋转，<b>Ctrl+D</b> 复制；属性面板可改宽度、颜色。</p>
+                    <p class="hint">每台设备可<b>绑定房间</b>（灯态/小程序分区优先按绑定）并控制<b>前端显示</b>；未绑定按画布位置判定。设置随户型保存。</p>
+                    <div id="deviceProps"></div>
                 </div>
             </div>
         </div>
@@ -569,25 +533,21 @@
         <div class="stage-wrap">
             <div class="canvas-toolbar">
                 <div class="tool-group">
-                    <span class="g-label cyan">通用</span>
-                    <button class="mode-btn on" data-mode="room"><span>选择 / 房间</span><span class="kbd">1</span></button>
-                    <button class="mode-btn" data-mode="opening"><span>门窗</span><span class="kbd">2</span></button>
-                    <button class="mode-btn" data-mode="wall"><span>墙体</span><span class="kbd">3</span></button>
-                </div>
-                <div class="tool-sep"></div>
-                <div class="tool-group">
-                    <span class="g-label orange">物件</span>
-                    <button class="mode-btn" data-mode="furniture"><span>家具</span><span class="kbd">4</span></button>
-                    <button class="mode-btn" data-mode="device"><span>设备</span><span class="kbd">5</span></button>
-                </div>
-                <div class="tool-sep"></div>
-                <div class="tool-group">
-                    <span class="g-label">底图</span>
-                    <button class="mode-btn" data-mode="trace"><span>描摹底图</span><span class="kbd">6</span></button>
+                    <button class="mode-btn on" data-mode="room"><span>房间</span></button>
+                    <button class="mode-btn" data-mode="wall"><span>墙体</span></button>
+                    <button class="mode-btn" data-mode="opening"><span>门窗</span></button>
+                    <button class="mode-btn" data-mode="furniture"><span>家具</span></button>
+                    <button class="mode-btn" data-mode="device"><span>设备</span></button>
                 </div>
                 <div class="spacer" style="flex:1"></div>
                 <div class="tool-group">
+                    <select id="snapSelect" style="width:96px;flex:none" title="吸附精度">
+                        <option value="1">吸附 1cm</option>
+                        <option value="10" selected>吸附 10cm</option>
+                        <option value="50">吸附 50cm</option>
+                    </select>
                     <button class="btn small" id="btnFit" title="适配全部（F）">适配画布</button>
+                    <button class="btn small primary" id="btnSavePlan" title="保存到 HA 户型中枢（改动已自动存本机）">保存</button>
                 </div>
             </div>
 
@@ -598,61 +558,45 @@
                     <button class="btn" id="btnZoomIn" title="放大">＋</button>
                     <button class="btn" id="btnZoomOut" title="缩小">－</button>
                 </div>
-                <div class="stage-tip">滚轮缩放 · 右键/Shift 拖动平移 · 1-6 切模式 · F 适配 · Ctrl+Z 撤销 · Delete 删除 · Esc 取消</div>
+                <div class="stage-tip">滚轮缩放 · 右键/Shift 拖动平移 · 1-4 切模式 · F 适配 · Ctrl+Z 撤销 · Delete 删除 · Esc 取消</div>
             </div>
 
             <div class="statusbar">
                 <span class="mono" id="coordTag">X 0.00 m · Y 0.00 m</span>
                 <span id="snapTag">吸附: 10cm</span>
-                <span class="sep2"></span>
-                <span>滚轮缩放</span>
             </div>
         </div>
 
-        <!-- 右栏：3D 实时预览 / 导图 / 属性 -->
+        <!-- 右栏：3D 实时预览 / 效果生成 -->
         <div class="panel-right">
             <div class="card">
                 <div class="card-title">
-                    <span class="en">LIVE MODEL</span><span class="zh">3D 实时预览</span>
+                    <span class="zh">3D 成品预览</span>
                     <span class="ext">左键旋转 · 右键平移 · 滚轮缩放</span>
                 </div>
                 <div class="preview-box">
                     <canvas id="preview3d"></canvas>
-                    <div class="preview-tag" id="previewTag">总览</div>
-                </div>
-                <div class="seg" id="styleSeg" style="margin-top:8px">
-                    <button data-style="solid" class="on">实体</button>
-                    <button data-style="blueprint">线条</button>
-                </div>
-                <div class="check-row" style="margin-top:7px"><input type="checkbox" id="chkSimFocus" checked><span>选中设备时演示小程序效果（房间勾勒 + 开灯变橙）</span></div>
-                <div class="divider"></div>
-                <div class="field" style="margin-bottom:0">
-                    <select id="buildRoom"></select>
-                    <button class="btn small primary" id="btnBuildPlay" style="flex:none">▶ 播放生成</button>
-                </div>
-                <p class="hint">从总览飞进选中房间：地板淡入 → 墙体生长 → 家具落位 → 灯亮。地板颜色跟随该房间灯的实际开关状态。</p>
-                <div class="btn-row">
-                    <button class="btn small" id="btnCamDefault">总览</button>
-                    <button class="btn small" id="btnCamFocus">贴到选中</button>
-                </div>
-                <!-- 小程序不再使用相机机位预设，旧的存/清按钮保留但隐藏，避免误操作 -->
-                <div style="display:none">
-                    <div class="btn-row">
-                        <button class="btn small primary" id="btnSaveDefault">存为默认视角</button>
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn small" id="btnSaveFocus">存为该设备聚焦</button>
-                        <button class="btn small danger" id="btnClearFocus">清除</button>
-                    </div>
-                    <p class="hint" id="focusHint"></p>
+                    <div class="preview-tag" id="previewTag">成品效果 · 对照修正 2D 图</div>
                 </div>
             </div>
 
             <div class="card" id="bakeCard">
                 <div class="card-title">
-                    <span class="en">EXPORT</span><span class="zh">导图 · 应用到小程序</span>
+                    <span class="zh">效果生成</span>
+                    <span class="ext">默认 2D CAD · 视角可调</span>
                 </div>
-                <canvas id="bakePreview" class="bake-preview" title="预渲染效果预览（图片 + 热区随之下发到小程序）"></canvas>
+                <div class="preview-box bake-stage">
+                    <canvas id="bakeStage"></canvas>
+                    <div class="preview-tag" id="bakeTag">2D CAD · 特效前视角</div>
+                </div>
+                <div class="seg" id="bakeCamSeg" style="margin-top:8px">
+                    <button data-cam="A" class="on">特效前视角</button>
+                    <button data-cam="B">特效后视角</button>
+                </div>
+                <div class="field" style="margin:8px 0 0">
+                    <select id="buildRoom"></select>
+                    <button class="btn small primary" id="btnBuildPlay" style="flex:none">▶ 生成</button>
+                </div>
                 <div class="seg" id="bakeRot" style="margin-top:8px">
                     <button data-rot="0" class="on">视角 0°</button>
                     <button data-rot="90">90°</button>
@@ -666,30 +610,32 @@
                     <button class="btn small primary" id="btnBakeExport">导出 PNG + 热区</button>
                     <button class="btn small accent" id="btnBakeUpload">上传到 HA</button>
                 </div>
-                <p class="hint">机位决定小程序首页那张「3D 户型图」的朝向、构图与大小；上传 HA 后小程序启动时自动拉取。</p>
-            </div>
-
-            <div class="card" style="flex:1 1 auto; min-height:180px; display:flex; flex-direction:column">
-                <div class="card-title">
-                    <span class="en">PROPERTIES</span><span class="zh">属性</span>
-                </div>
-                <div class="stats-box" id="stats"></div>
-                <div class="props-float" id="props"></div>
+                <p class="hint">两块画布都能拖动调整：拖动旋转 · 右键平移 · 滚轮缩放。当前选中的视角卡就是生成特效的起点/终点机位；点「▶ 生成」镜头从「特效前」飞到「特效后」，只搭建所选房间，其他房间保持 2D CAD。</p>
             </div>
         </div>
     </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<input type="file" id="fileInput" accept=".json,application/json" style="display:none" />
-<input type="file" id="traceInput" accept="image/*" style="display:none" />
+<div id="props" style="display:none"></div>
 
-<dialog id="jsonDialog">
-    <div class="dlg-head" id="jsonDlgTitle">户型 JSON</div>
-    <div class="dlg-body"><textarea id="jsonText" spellcheck="false"></textarea></div>
+<!-- 运行日志面板：编辑器本地日志 + 小程序推到 HA 的诊断日志 -->
+<dialog id="logDlg">
+    <div class="dlg-head">运行日志
+        <span class="log-tabs">
+            <button class="btn small on" id="logTabEd">编辑器</button>
+            <button class="btn small" id="logTabMp">小程序</button>
+        </span>
+    </div>
+    <div class="dlg-body">
+        <textarea id="logText" readonly spellcheck="false"></textarea>
+        <p class="hint" id="logHint">编辑器日志：页面操作与报错都记在这里（保留最近 500 行）。</p>
+    </div>
     <div class="dlg-foot">
-        <button class="btn" id="jsonDlgCancel">关闭</button>
-        <button class="btn primary" id="jsonDlgOk">导入</button>
+        <button class="btn small" id="logRefresh">刷新</button>
+        <button class="btn small" id="logCopy">复制全部</button>
+        <button class="btn small" id="logClear">清空</button>
+        <button class="btn small primary" id="logClose">关闭</button>
     </div>
 </dialog>
 
@@ -1035,12 +981,78 @@ function normalizeHouse(house) {
         .map(item => normalizeOpening(item, base.rooms))
         .filter(Boolean);
     base.edges = normalizeEdges(house.edges, base.rooms);
+    // 墙体属性覆盖：{ 'roomId:side': { t, h, color, alpha } }
+    base.wallProps = {};
+    if (house.wallProps && typeof house.wallProps === 'object') {
+        Object.keys(house.wallProps).forEach(key => {
+            const item = house.wallProps[key];
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+            const out = {};
+            if (typeof item.t === 'number' && item.t >= 6 && item.t <= 60) { out.t = Math.round(item.t); }
+            if (typeof item.h === 'number' && item.h >= 30 && item.h <= 600) { out.h = Math.round(item.h); }
+            if (typeof item.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(item.color)) { out.color = item.color; }
+            if (typeof item.alpha === 'number' && item.alpha >= 0 && item.alpha <= 1) { out.alpha = item.alpha; }
+            if (Object.keys(out).length > 0) {
+                base.wallProps[key] = out;
+            }
+        });
+    }
+    // 效果生成自定义机位（编辑器调好存这里，随户型一起保存/上传 HA）：
+    // { before: 特效前视角, afterRooms: { roomId: 特效后视角 } }
+    const okView = v => v && typeof v === 'object'
+        && ['tx', 'tz', 'yaw', 'pitch', 'dist'].every(k => typeof v[k] === 'number' && isFinite(v[k]));
+    const copyView = v => ({
+        tx: Math.round(v.tx * 1000) / 1000,
+        tz: Math.round(v.tz * 1000) / 1000,
+        yaw: Math.round(v.yaw * 10) / 10,
+        pitch: Math.round(v.pitch * 10) / 10,
+        dist: Math.round(v.dist * 100) / 100,
+    });
+    base.genViews = { before: null, afterRooms: {} };
+    if (house.genViews && typeof house.genViews === 'object') {
+        if (okView(house.genViews.before)) {
+            base.genViews.before = copyView(house.genViews.before);
+        }
+        if (house.genViews.afterRooms && typeof house.genViews.afterRooms === 'object') {
+            Object.keys(house.genViews.afterRooms).forEach(roomId => {
+                if (okView(house.genViews.afterRooms[roomId])) {
+                    base.genViews.afterRooms[roomId] = copyView(house.genViews.afterRooms[roomId]);
+                }
+            });
+        }
+    }
     base.furniture = (Array.isArray(house.furniture) ? house.furniture : [])
         .map(normalizeFurniture)
         .filter(Boolean);
     base.devices = (Array.isArray(house.devices) ? house.devices : [])
         .map(normalizeDevice)
         .filter(Boolean);
+    // 设备绑定（编辑器里设置，随户型走）：
+    // { [entityId]: { roomId: 户型房间 id（空串=按画布位置判定）, hidden: 前端不显示 } }
+    // 小程序设置页的手动分房仍可覆盖这里的值。
+    base.deviceSettings = {};
+    if (house.deviceSettings && typeof house.deviceSettings === 'object') {
+        const roomIds = {};
+        base.rooms.forEach(room => { roomIds[room.id] = true; });
+        Object.keys(house.deviceSettings).forEach(entityId => {
+            const item = house.deviceSettings[entityId];
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+            const out = {};
+            if (typeof item.roomId === 'string' && (item.roomId === '' || roomIds[item.roomId])) {
+                out.roomId = item.roomId;
+            }
+            if (item.hidden === true) {
+                out.hidden = true;
+            }
+            if (Object.keys(out).length > 0) {
+                base.deviceSettings[entityId] = out;
+            }
+        });
+    }
     normalizeTrace(house, base);
     // 主页默认俯瞰机位（电脑端编辑器可保存）
     const view = normalizeView(house.view);
@@ -1050,9 +1062,21 @@ function normalizeHouse(house) {
     return base;
 }
 
+// ---------- 设备绑定（编辑器 deviceSettings）快捷读取 ----------
+// 设备绑定的房间 id；''=未绑定（按画布位置判定）
+function boundRoomId(house, entityId) {
+    const s = house && house.deviceSettings && house.deviceSettings[entityId];
+    return s && typeof s.roomId === 'string' ? s.roomId : '';
+}
+
+// 设备是否被编辑器标记为「前端不显示」
+function boundHidden(house, entityId) {
+    const s = house && house.deviceSettings && house.deviceSettings[entityId];
+    return !!(s && s.hidden);
+}
+
 // 示例户型：单层 6 房间（客厅/餐厅/厨房/主卧/次卧/卫生间）
-function sampleHouse() {
-    return {
+function sampleHouse() {    return {
         rooms: [
             { id: 'r-living', name: '客厅', x: 0, y: 0, w: 480, h: 400, color: ROOM_COLORS[0] },
             { id: 'r-dining', name: '餐厅', x: 480, y: 0, w: 320, h: 400, color: ROOM_COLORS[1] },
@@ -1210,9 +1234,10 @@ function openingsOnSide(house, room, side) {
     return list;
 }
 
-// 沿一条边生成墙体分段（挖出门窗洞）
+// 沿一条边生成墙体分段（挖出门窗洞）；height 为该墙有效高度（矮墙/自定义覆盖时低于 WALL_H）
 // 返回 pieces: [{ kind, offset0, offset1, y0, h }]
-function wallSpans(span, thicknessPieces) {
+function wallSpans(span, thicknessPieces, height) {
+    const H = height || WALL_H;
     const list = (thicknessPieces || []).slice()
         .map(item => {
             const half = item.width / 2;
@@ -1241,19 +1266,19 @@ function wallSpans(span, thicknessPieces) {
             return;
         }
         if (c0 > cursor) {
-            pieces.push({ kind: 'wall', o0: cursor, o1: c0, y0: 0, h: WALL_H });
+            pieces.push({ kind: 'wall', o0: cursor, o1: c0, y0: 0, h: H });
         }
         if (item.type === 'door') {
-            pieces.push({ kind: 'lintel', o0: c0, o1: c1, y0: DOOR_H, h: WALL_H - DOOR_H });
+            pieces.push({ kind: 'lintel', o0: c0, o1: c1, y0: DOOR_H, h: H - DOOR_H });
         } else {
             pieces.push({ kind: 'sill', o0: c0, o1: c1, y0: 0, h: WIN_Y0 });
             pieces.push({ kind: 'glass', o0: c0, o1: c1, y0: WIN_Y0, h: WIN_H });
-            pieces.push({ kind: 'head', o0: c0, o1: c1, y0: WIN_Y0 + WIN_H, h: WALL_H - WIN_Y0 - WIN_H });
+            pieces.push({ kind: 'head', o0: c0, o1: c1, y0: WIN_Y0 + WIN_H, h: H - WIN_Y0 - WIN_H });
         }
         cursor = c1;
     });
     if (cursor < span) {
-        pieces.push({ kind: 'wall', o0: cursor, o1: span, y0: 0, h: WALL_H });
+        pieces.push({ kind: 'wall', o0: cursor, o1: span, y0: 0, h: H });
     }
     return pieces;
 }
@@ -1269,8 +1294,12 @@ function wallLayout(house) {
                 return;
             }
             const exterior = !info.other;
-            const t = exterior ? WALL_T_EXT : WALL_T_INT;
-            const height = info.style === 'low' ? LOW_H : WALL_H;
+            // 墙体属性覆盖（编辑器「墙体」模式可调宽/高/颜色/透明度）：house.wallProps['roomId:side']
+            const wp = (house.wallProps || {})[room.id + ':' + edge.side] || {};
+            const t = typeof wp.t === 'number' && wp.t >= 6 ? clamp(wp.t, 6, 60)
+                : (exterior ? WALL_T_EXT : WALL_T_INT);
+            const height = typeof wp.h === 'number' && wp.h >= 30 ? clamp(wp.h, 30, 600)
+                : (info.style === 'low' ? LOW_H : WALL_H);
             // 墙体带的平面矩形：外墙向外、内墙向自己房间内
             let rect;
             if (edge.side === 'n') {
@@ -1311,6 +1340,8 @@ function wallLayout(house) {
                     h: Math.min(span.h, height),
                     kind: span.kind,
                     exterior,
+                    color: typeof wp.color === 'string' ? wp.color : '',
+                    alpha: typeof wp.alpha === 'number' ? clamp(wp.alpha, 0, 1) : null,
                 });
             });
         });
@@ -1430,12 +1461,13 @@ const PIECE_COLORS = {
 };
 
 // 米家 3D 户型风格：淡蓝灰半透明墙体 + 浅灰地板 + 奶白家具
+// 墙体透明度语义：0 = 全透明，1 = 完全不透明白墙；默认 0.6，可被 wallProps 单墙覆盖
 const MIHOME = {
-    wall: '#DCE6F2',
-    wallAlpha: 0.88,
-    lowWall: '#E3EBF5',
-    glass: '#B7D8F2',
-    glassAlpha: 0.52,
+    wall: '#aebfda',
+    wallAlpha: 0.6,
+    lowWall: '#b8c8de',
+    glass: '#9fc4e8',
+    glassAlpha: 0.3,
     topLine: '#AEBECD',
     floor: '#E9EEF5',
     floorLit: '#F0A03C',
@@ -1539,7 +1571,10 @@ function buildScene(house, markers, eye, opts) {
     if (!o.noFloors) {
         house.rooms.forEach(room => {
             let color = room.color;
-            if (o.highlightRoomId && room.id === o.highlightRoomId) {
+            // o.floorColors：每房间地板颜色覆盖（灯绑定：开灯橙 / 关灯灰）
+            if (o.floorColors && o.floorColors[room.id]) {
+                color = o.floorColors[room.id];
+            } else if (o.highlightRoomId && room.id === o.highlightRoomId) {
                 color = BLUEPRINT_COLORS.highlightFloor;
             } else if (blueprint) {
                 color = BLUEPRINT_COLORS.floor;
@@ -1598,10 +1633,17 @@ function buildScene(house, markers, eye, opts) {
                 ? anim.walls[piece.roomId] : 1;
             // o.cullNearWalls：娃娃屋隐墙——挡住视线的近侧墙体直接剔除（viewer3d 同款观感）
             const wallTarget = o.cullNearWalls && pieceFacesEye(piece, eye) ? hidden : walls;
-            // 米家风格：整段墙半透明，近处墙不剔除，靠透明度看进屋内
-            const color = isGlass ? MIHOME.glass
-                : (piece.h < WALL_H ? MIHOME.lowWall : MIHOME.wall);
-            const alpha = isGlass ? MIHOME.glassAlpha : MIHOME.wallAlpha;
+            // 米家风格：整段墙半透明，近处墙不剔除，靠透明度看进屋内；墙体模式可单墙改色/改透明度
+            const color = isGlass
+                ? (piece.color || MIHOME.glass)
+                : (piece.color || (piece.h < WALL_H ? MIHOME.lowWall : MIHOME.wall));
+            let alpha = typeof piece.alpha === 'number' ? piece.alpha
+                : (isGlass ? MIHOME.glassAlpha : MIHOME.wallAlpha);
+            // o.dimNearWalls：挡视野的近侧墙统一减淡到该透明度（特效生成用，默认 0.10）；
+            // 用户给这面墙设过更低透明度则保持更低
+            if (o.dimNearWalls && pieceFacesEye(piece, eye)) {
+                alpha = Math.min(alpha, o.dimNearWalls);
+            }
             const y0s = piece.y0 / 100 * gk;
             const hs = piece.h / 100 * gk;
             if (hs > 0.004) {
@@ -1611,12 +1653,34 @@ function buildScene(house, markers, eye, opts) {
                 if (piece.kind === 'wall' || piece.kind === 'head' || piece.kind === 'lintel') {
                     addTopLine(wallTarget, rect, y0s + hs + 0.004, MIHOME.topLine, 0.95);
                 }
+            } else if (anim && anim.lines) {
+                // 搭建特效：未搭建的房间保持 2D CAD 态——墙段画地面足迹线，随生长淡出
+                const la = anim.lines[piece.roomId];
+                if (la && piece.kind === 'wall') {
+                    addOutline(walls, rect.x, rect.y, rect.w, rect.h, 0.012,
+                        la.color || BLUEPRINT_COLORS.wallTop,
+                        (typeof la.alpha === 'number' ? la.alpha : 0.9) * (1 - gk));
+                }
             }
         });
 
         house.furniture.forEach(item => {
-            addFurniture(stat, item, soft,
-                anim && anim.furn ? anim.furn[item.id] : null);
+            const fa = anim && anim.furn ? anim.furn[item.id] : null;
+            addFurniture(stat, item, soft, fa);
+            // 搭建特效：家具未长出时画 CAD 足迹线，随 k 淡出（foot = { color, alpha }）
+            if (anim && anim.lines && fa && fa.foot) {
+                const meta2 = FURNITURE_TYPES[item.type];
+                if (meta2) {
+                    const k2 = typeof fa.k === 'number' ? Math.min(1, fa.k) : 1;
+                    const swap2 = item.rot === 90 || item.rot === 270;
+                    const sx2 = item.w ? clamp(item.w, 30, 400) / meta2.w : 1;
+                    const wCm2 = swap2 ? meta2.d : meta2.w * sx2;
+                    const dCm2 = swap2 ? meta2.w * sx2 : meta2.d;
+                    addOutline(walls, item.x - wCm2 / 2, item.y - dCm2 / 2, wCm2, dCm2, 0.014,
+                        fa.foot.color || BLUEPRINT_COLORS.furnLine,
+                        (typeof fa.foot.alpha === 'number' ? fa.foot.alpha : 0.85) * (1 - k2));
+                }
+            }
         });
     }
 
@@ -1721,6 +1785,9 @@ module.exports = {
     MIHOME,
     normalizeHouse,
     normalizeView,
+    // 设备绑定（deviceSettings）快捷读取：没绑定返回 '' / false
+    boundRoomId,
+    boundHidden,
     sampleHouse,
     roomEdges,
     projectToEdge,
@@ -1878,14 +1945,16 @@ function buildGroup(group, order) {
 }
 
 
-function createRenderer(canvas) {
+function createRenderer(canvas, opts) {
     const three = new THREE.WebGLRenderer({
         canvas,
         antialias: true,
         alpha: false,
         powerPreference: 'high-performance',
+        // 离屏出图（特效关键帧）需要 preserve，toBlob 才能拿到稳定画面
+        preserveDrawingBuffer: !!(opts && opts.preserve),
     });
-    three.setClearColor(0xe9eef4, 1); // 图纸底色（线条生成版）
+    three.setClearColor(0xe9eef4, 1); // 图纸底色（线条生成版），可用 setBackground 覆盖
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 300);
@@ -1926,6 +1995,12 @@ function createRenderer(canvas) {
 
     function setMode(next) {
         mode = next === 'line' ? 'line' : 'solid';
+    }
+
+    function setBackground(color) {
+        if (color) {
+            three.setClearColor(new THREE.Color(color), 1);
+        }
     }
 
     function setCamera(params) {
@@ -1994,6 +2069,7 @@ function createRenderer(canvas) {
         setFx,
         setWalls,
         setMode,
+        setBackground,
         setCamera,
         getCamera,
         cameraEye,
@@ -2713,7 +2789,7 @@ return module.exports;
         light: '灯光', climate: '空调', fan: '风扇', cover: '窗帘', media_player: '影音',
     };
     const SUPPORTED = Object.keys(DOMAIN_TITLES);
-    const MODES = ['room', 'opening', 'wall', 'furniture', 'device', 'trace'];
+    const MODES = ['room', 'wall', 'opening', 'furniture', 'device'];
     const MODE_NAMES = { room: '房间', opening: '门窗', wall: '墙体', furniture: '家具', device: '设备', trace: '底图' };
     const ON_STATES = ['on', 'open', 'open_open', 'playing', 'heating', 'cooling', 'heat', 'cool', 'auto'];
 
@@ -2723,11 +2799,12 @@ return module.exports;
         selection: null,
         drag: null,
         draft: null,
-        openType: 'door',
+        openType: '',
         armedFurniture: '',
         armedEntityId: '',
         devices: [],
         liveStates: {},
+        deviceFilter: '',
         view: { scale: 0.25, ox: 40, oy: 40 },
         cam: { tx: 0, tz: 0, yaw: -35, pitch: 55, dist: 8 },
         snapGrid: 10,
@@ -2737,8 +2814,6 @@ return module.exports;
         traceAspect: 1,
         calib: null,
         restoring: false,
-        previewStyle: 'solid',
-        simulateFocus: true,
         guides: [],
         hover: null,
         lastDeviceSel: '',
@@ -2753,6 +2828,57 @@ return module.exports;
         clearTimeout(toast.timer);
         toast.timer = setTimeout(() => box.classList.remove('show'), 2200);
     }
+
+    // ---------- 编辑器运行日志（环形缓冲，日志面板查看） ----------
+    const EDITOR_LOG_MAX = 500;
+    const editorLogs = [];
+
+    function edLog(tag, msg) {
+        const t = new Date();
+        const hh = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0')
+            + ':' + String(t.getSeconds()).padStart(2, '0');
+        let text = '';
+        if (msg == null) {
+            text = '';
+        } else if (typeof msg === 'object') {
+            try { text = JSON.stringify(msg); } catch (e) { text = '[obj]'; }
+        } else {
+            text = String(msg);
+        }
+        editorLogs.push(hh + ' [' + tag + '] ' + text);
+        if (editorLogs.length > EDITOR_LOG_MAX) {
+            editorLogs.shift();
+        }
+    }
+
+    function edLogVal(args) {
+        return Array.prototype.map.call(args, item => {
+            if (item instanceof Error) {
+                return item.message;
+            }
+            if (typeof item === 'object') {
+                try { return JSON.stringify(item); } catch (e) { return '[obj]'; }
+            }
+            return String(item);
+        }).join(' ');
+    }
+
+    // console.error / 全局异常自动进日志：出问题时有迹可查
+    (function () {
+        const origError = console.error;
+        console.error = function () {
+            try { edLog('err', edLogVal(arguments)); } catch (e) { /* 忽略 */ }
+            return origError.apply(console, arguments);
+        };
+        window.addEventListener('error', event => {
+            edLog('err', (event.message || '脚本错误') + ' @'
+                + String(event.filename || '').split('/').pop() + ':' + (event.lineno || 0));
+        });
+        window.addEventListener('unhandledrejection', event => {
+            const reason = event.reason;
+            edLog('err', 'unhandled ' + (reason && reason.message ? reason.message : String(reason)));
+        });
+    })();
 
     function clamp(v, a, b) {
         return Math.min(b, Math.max(a, v));
@@ -2773,6 +2899,7 @@ return module.exports;
         state.histIndex = state.history.length - 1;
         scheduleAutosave();
         refreshHistoryButtons();
+        pushHouseRev();   // 户型一变，效果生成舞台回到 CAD 默认态
     }
 
     function restore(snapshot) {
@@ -2800,8 +2927,7 @@ return module.exports;
     }
 
     function refreshHistoryButtons() {
-        $('btnUndo').disabled = state.histIndex <= 0;
-        $('btnRedo').disabled = state.histIndex >= state.history.length - 1;
+        // 撤销/重做按钮已移除，Ctrl+Z / Ctrl+Y 快捷键仍可用
     }
 
     let autosaveTimer = null;
@@ -2879,7 +3005,7 @@ return module.exports;
         const w = canvasSize.width;
         const h = canvasSize.height;
         ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = '#14181e';
+        ctx.fillStyle = '#2a3644';
         ctx.fillRect(0, 0, w, h);
 
         // 网格：0.5m 细线 + 1m 略亮
@@ -2912,6 +3038,7 @@ return module.exports;
         drawFurniture2D();
         drawWalls();
         drawOpeningDecor();
+        drawWallDims();
         if (state.mode === 'wall') {
             drawEdgeStyles();
         }
@@ -2983,6 +3110,9 @@ return module.exports;
             ctx.stroke();
             ctx.setLineDash([]);
         } else if (state.mode === 'opening') {
+            if (!state.openType) {
+                return; // 未选「放门 / 放窗」时不画虚影，纯选中模式
+            }
             const near = H.nearestEdge(state.house, cm.x, cm.y);
             if (!near || near.proj.dist * state.view.scale > 60) {
                 return;
@@ -3099,17 +3229,23 @@ return module.exports;
         const pieces = H.wallLayout(state.house);
         pieces.forEach(piece => {
             const a = toPx(piece.rect.x, piece.rect.y);
-            ctx.fillStyle = piece.kind === 'glass' ? 'rgba(120,175,220,0.38)' : '#46505f';
+            const isGlass = piece.kind === 'glass';
+            const alpha = typeof piece.alpha === 'number' ? piece.alpha : (isGlass ? 0.38 : 1);
+            ctx.fillStyle = isGlass
+                ? (piece.color ? hexAlpha(piece.color, alpha) : 'rgba(120,175,220,0.38)')
+                : hexAlpha(piece.color || '#46505f', alpha);
             ctx.fillRect(a.x, a.y, piece.rect.w * state.view.scale, piece.rect.h * state.view.scale);
         });
-        // 墙体描边
+        // 墙体描边（选中的墙高亮）
         pieces.forEach(piece => {
             if (piece.kind !== 'wall' && piece.kind !== 'glass') {
                 return;
             }
+            const on = state.selection && state.selection.type === 'wall'
+                && state.selection.roomId === piece.roomId && state.selection.side === piece.side;
             const a = toPx(piece.rect.x, piece.rect.y);
-            ctx.strokeStyle = 'rgba(190,205,225,0.65)';
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = on ? ACCENT : 'rgba(190,205,225,0.65)';
+            ctx.lineWidth = on ? 1.8 : 0.8;
             ctx.strokeRect(a.x, a.y, piece.rect.w * state.view.scale, piece.rect.h * state.view.scale);
         });
         // 房间名放最后画（避免被墙盖住）：名字靠房间顶部，尺寸在下方
@@ -3123,7 +3259,7 @@ return module.exports;
                 ctx.lineWidth = 2;
                 ctx.strokeRect(a.x, a.y, bw, bh);
                 [[a.x, a.y], [a.x + bw, a.y], [a.x + bw, a.y + bh], [a.x, a.y + bh]].forEach(corner => {
-                    ctx.fillStyle = '#14181e';
+                    ctx.fillStyle = '#2a3644';
                     ctx.strokeStyle = ACCENT;
                     ctx.lineWidth = 2;
                     ctx.beginPath();
@@ -3143,6 +3279,59 @@ return module.exports;
                     ctx.font = '11px "Microsoft YaHei", sans-serif';
                     ctx.fillText(Math.round(room.w) + ' × ' + Math.round(room.h) + ' cm', a.x + bw / 2, a.y + 36);
                 }
+            }
+        });
+    }
+
+    // 墙外侧长度标注：标在房间外侧（远离房间中心一侧）；两个房间共享的内墙不标
+    function drawWallDims() {
+        if (state.view.scale < 0.07) {
+            return;
+        }
+        const seen = {};
+        state.house.rooms.forEach(room => {
+            H.roomEdges(room).forEach(edge => {
+                const key = edge.x1 === edge.x2
+                    ? 'v:' + Math.round(Math.min(edge.x1, edge.x2)) + ':' + Math.round(Math.min(edge.y1, edge.y2))
+                    : 'h:' + Math.round(Math.min(edge.x1, edge.x2)) + ':' + Math.round(Math.min(edge.y1, edge.y2));
+                if (seen[key]) {
+                    seen[key].shared = true;
+                    return;
+                }
+                seen[key] = { edge: edge, room: room, shared: false };
+            });
+        });
+        ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+        ctx.fillStyle = 'rgba(205,218,238,0.8)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        Object.keys(seen).forEach(key => {
+            const item = seen[key];
+            if (item.shared) {
+                return;
+            }
+            const edge = item.edge;
+            const room = item.room;
+            const mx = (edge.x1 + edge.x2) / 2;
+            const my = (edge.y1 + edge.y2) / 2;
+            const cx = room.x + room.w / 2;
+            const cy = room.y + room.h / 2;
+            let dx = mx - cx;
+            let dy = my - cy;
+            const dist = Math.hypot(dx, dy) || 1;
+            dx /= dist;
+            dy /= dist;
+            const off = 36; // 墙厚 24cm + 余量，落在墙外侧
+            const px = toPx(mx + dx * off, my + dy * off);
+            const text = (Math.round(Math.hypot(edge.x2 - edge.x1, edge.y2 - edge.y1)) / 100).toFixed(2) + ' m';
+            if (edge.x1 === edge.x2) {
+                ctx.save();
+                ctx.translate(px.x, px.y);
+                ctx.rotate(Math.PI / 2);
+                ctx.fillText(text, 0, 0);
+                ctx.restore();
+            } else {
+                ctx.fillText(text, px.x, px.y);
             }
         });
     }
@@ -3241,10 +3430,14 @@ return module.exports;
     function drawDevices() {
         state.house.devices.forEach(item => {
             const meta = deviceMeta(item.entityId);
+            const hidden = H.boundHidden(state.house, item.entityId);
             const p = toPx(item.x, item.y);
             const selected = state.selection && state.selection.type === 'device' && state.selection.id === item.entityId;
             const color = H.DEVICE_COLORS[meta.kind] || H.DEVICE_COLORS.other;
             const isLight = meta.kind === 'light';
+            if (hidden) {
+                ctx.globalAlpha = 0.35;   // 前端隐藏的设备画淡一点，方便找到并管理
+            }
             if (item.focus) {
                 ctx.strokeStyle = 'rgba(91,141,255,0.55)';
                 ctx.setLineDash([3, 3]);
@@ -3267,14 +3460,14 @@ return module.exports;
                 ctx.fill();
             }
             ctx.fillStyle = selected ? ACCENT : color;
-            ctx.strokeStyle = '#14181e';
+            ctx.strokeStyle = '#2a3644';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(p.x, p.y, 7.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
             if (isLight) {
-                ctx.strokeStyle = '#14181e';
+                ctx.strokeStyle = '#2a3644';
                 ctx.lineWidth = 1.4;
                 ctx.beginPath();
                 ctx.moveTo(p.x - 3, p.y);
@@ -3287,8 +3480,9 @@ return module.exports;
             ctx.font = '11px "Microsoft YaHei", sans-serif';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
-            const label = meta.name.slice(0, 8) + (on ? ' · 亮' : '');
+            const label = meta.name.slice(0, 8) + (on ? ' · 亮' : '') + (hidden ? ' · 隐藏' : '');
             ctx.fillText(label, p.x + 11, p.y);
+            ctx.globalAlpha = 1;
         });
     }
 
@@ -3450,24 +3644,25 @@ return module.exports;
         return { a: near.room.id, b: info.other.id };
     }
 
+    // 墙体模式：点墙段本体选中（含外墙；门窗洞的门楣/窗台也算这面墙）
+    function hitWallPiece(cm) {
+        let found = null;
+        H.wallLayout(state.house).forEach(piece => {
+            if (piece.kind === 'glass') {
+                return;
+            }
+            const r = piece.rect;
+            if (cm.x >= r.x && cm.x <= r.x + r.w && cm.y >= r.y && cm.y <= r.y + r.h) {
+                found = piece;
+            }
+        });
+        return found;
+    }
+
     // ---------- 交互 ----------
     function select(selection) {
-        const prevDevice = state.selection && state.selection.type === 'device' ? state.selection.id : '';
-        const newDevice = selection && selection.type === 'device' ? selection.id : '';
         state.selection = selection;
-        // 聚焦模拟：选中设备 → 3D 飞到它的机位；取消选中 → 回默认视角
-        if (state.simulateFocus && renderer) {
-            if (newDevice && newDevice !== prevDevice) {
-                const placed = state.house.devices.find(item => item.entityId === newDevice);
-                if (placed) {
-                    applyCam(placed.focus || H.focusView(placed.x, placed.y, bounds()),
-                        '聚焦预览：' + deviceMeta(newDevice).name);
-                }
-            } else if (!newDevice && prevDevice) {
-                applyCam(state.house.view || H.defaultView(bounds()), '默认视角');
-            }
-        }
-        state.lastDeviceSel = newDevice || (selection ? state.lastDeviceSel : '');
+        state.lastDeviceSel = selection && selection.type === 'device' ? selection.id : (selection ? state.lastDeviceSel : '');
         renderPanels();
         renderProps();
         updateFocusPanel();
@@ -3549,10 +3744,10 @@ return module.exports;
         }
 
         if (mode === 'wall') {
-            // 点击共用墙线 → 选中这段墙，样式在属性面板里切换
-            const pair = hitSharedBoundary(cm);
-            if (pair) {
-                select({ type: 'wall', a: pair.a, b: pair.b });
+            // 点击墙段 → 选中这面墙，宽/高/颜色/透明度在左栏属性里调
+            const piece = hitWallPiece(cm);
+            if (piece) {
+                select({ type: 'wall', roomId: piece.roomId, side: piece.side });
             } else {
                 select(null);
             }
@@ -3603,8 +3798,9 @@ return module.exports;
                 select({ type: 'opening', id: openingId });
                 return { kind: 'moveOpening', id: openingId, roomId: opening.roomId, side: opening.side };
             }
+            // 没选中「放门 / 放窗」时，只选不添加
             const near = H.nearestEdge(state.house, cm.x, cm.y);
-            if (near && near.proj.dist * state.view.scale < 36) {
+            if (state.openType && near && near.proj.dist * state.view.scale < 36) {
                 const span = near.side === 'n' || near.side === 's' ? near.room.w : near.room.h;
                 const width = Math.min(100, span - 20);
                 const opening = {
@@ -4210,6 +4406,30 @@ return module.exports;
 
     // ---------- 左侧栏 ----------
     function renderPanels() {
+        // 房间列表（房间模式）
+        const roomList = $('roomList');
+        if (roomList) {
+            roomList.innerHTML = '';
+            $('roomCount').textContent = String(state.house.rooms.length);
+            state.house.rooms.forEach(room => {
+                const row = document.createElement('div');
+                const on = state.selection && state.selection.type === 'room' && state.selection.id === room.id;
+                row.className = 'list-item' + (on ? ' on' : '');
+                row.innerHTML = '<span class="dot"></span><span class="name"></span><span class="dim"></span>';
+                row.querySelector('.dot').style.background = room.color || '#e9dfc6';
+                row.querySelector('.name').textContent = room.name;
+                row.querySelector('.dim').textContent = (room.w / 100).toFixed(1) + '×' + (room.h / 100).toFixed(1) + ' m';
+                row.addEventListener('click', () => {
+                    setMode('room');
+                    select({ type: 'room', id: room.id });
+                });
+                roomList.appendChild(row);
+            });
+            if (state.house.rooms.length === 0) {
+                roomList.innerHTML = '<div class="hint">还没有房间：在画布上拖一个矩形开始。</div>';
+            }
+        }
+
         const grid = $('furnGrid');
         grid.innerHTML = '';
         const kw = ($('furnSearch') && $('furnSearch').value.trim()) || '';
@@ -4228,7 +4448,7 @@ return module.exports;
                 grid.appendChild(btn);
             });
 
-        // 设备列表：HA 拉取的 + 户型里已有的
+        // 设备列表：HA 拉取的 + 户型里已有的；支持名称过滤，每台设备可绑房间 / 控制前端显示
         const catalog = [];
         const seen = {};
         state.devices.forEach(device => {
@@ -4241,20 +4461,69 @@ return module.exports;
                 seen[item.entityId] = true;
             }
         });
+        const filter = (state.deviceFilter || '').toLowerCase();
+        const shown = catalog.filter(device => {
+            if (filter && device.entityId.toLowerCase().indexOf(filter) === -1
+                && String(device.name || '').toLowerCase().indexOf(filter) === -1) {
+                return false;
+            }
+            return true;
+        });
         const list = $('deviceList');
         list.innerHTML = '';
-        $('deviceCount').textContent = String(catalog.length);
-        catalog.forEach(device => {
+        $('deviceCount').textContent = shown.length === catalog.length
+            ? String(catalog.length)
+            : shown.length + '/' + catalog.length;
+        shown.forEach(device => {
             const placed = state.house.devices.some(item => item.entityId === device.entityId);
+            const settings = (state.house.deviceSettings && state.house.deviceSettings[device.entityId]) || {};
             const row = document.createElement('div');
-            row.className = 'list-item' + (state.armedEntityId === device.entityId ? ' on' : '');
-            row.innerHTML = '<span class="name"></span><span class="flag"></span><span class="dim"></span>';
+            row.className = 'list-item dev-row' + (state.armedEntityId === device.entityId ? ' on' : '');
+            row.innerHTML = '<div class="dev-main"><span class="name"></span><span class="flag"></span><span class="dim"></span></div>'
+                + '<div class="dev-sub">'
+                + '<select class="dev-room" title="绑定房间（灯态/小程序分区）"></select>'
+                + '<label class="dev-show"><input type="checkbox">前端显示</label>'
+                + '</div>';
             row.querySelector('.name').textContent = device.name;
-            row.querySelector('.flag').textContent = placed ? '已放' : '';
+            const flags = [];
+            if (placed) { flags.push('已放'); }
+            if (settings.hidden) { flags.push('已隐藏'); }
+            if (settings.roomId) {
+                const br = state.house.rooms.find(r => r.id === settings.roomId);
+                flags.push(br ? '→ ' + br.name : '→ 已绑房间');
+            }
+            row.querySelector('.flag').textContent = flags.join(' · ');
             const live = state.liveStates[device.entityId];
             row.querySelector('.dim').textContent = live
                 ? (DOMAIN_TITLES[device.kind] || device.kind) + ' · ' + live
                 : (DOMAIN_TITLES[device.kind] || device.kind);
+            // 房间绑定下拉
+            const roomSel = row.querySelector('.dev-room');
+            roomSel.innerHTML = '';
+            const optAuto = document.createElement('option');
+            optAuto.value = '';
+            optAuto.textContent = '按画布位置';
+            roomSel.appendChild(optAuto);
+            state.house.rooms.forEach(room => {
+                const opt = document.createElement('option');
+                opt.value = room.id;
+                opt.textContent = room.name;
+                if (settings.roomId === room.id) {
+                    opt.selected = true;
+                }
+                roomSel.appendChild(opt);
+            });
+            roomSel.addEventListener('click', e => e.stopPropagation());
+            roomSel.addEventListener('change', () => {
+                setDeviceSetting(device.entityId, { roomId: roomSel.value });
+            });
+            // 前端显示开关
+            const showChk = row.querySelector('.dev-show input');
+            showChk.checked = !settings.hidden;
+            showChk.addEventListener('click', e => e.stopPropagation());
+            showChk.addEventListener('change', () => {
+                setDeviceSetting(device.entityId, { hidden: !showChk.checked });
+            });
             row.addEventListener('click', () => {
                 state.armedEntityId = state.armedEntityId === device.entityId ? '' : device.entityId;
                 setMode('device');
@@ -4266,14 +4535,29 @@ return module.exports;
         });
         if (catalog.length === 0) {
             list.innerHTML = '<div class="hint">点上方「拉取设备」从 HA 读设备（带实时状态），或手动添加 entity_id</div>';
+        } else if (shown.length === 0) {
+            list.innerHTML = '<div class="hint">没有匹配「' + state.deviceFilter + '」的设备</div>';
         }
+    }
 
-        $('stats').textContent = '房间 ' + state.house.rooms.length
-            + ' · 门窗 ' + state.house.openings.length
-            + ' · 边界样式 ' + state.house.edges.length
-            + ' · 家具 ' + state.house.furniture.length
-            + ' · 设备 ' + state.house.devices.length
-            + (state.house.view ? ' · 已设默认机位' : '');
+    // 写入设备绑定（house.deviceSettings），随户型保存/上传 HA / 小程序同步
+    function setDeviceSetting(entityId, partial) {
+        if (!state.house.deviceSettings || typeof state.house.deviceSettings !== 'object') {
+            state.house.deviceSettings = {};
+        }
+        const cur = state.house.deviceSettings[entityId] || {};
+        const next = Object.assign({}, cur, partial);
+        // 空绑定不落库（roomId 空 + 不隐藏 = 没设置过）
+        if (!next.roomId && !next.hidden) {
+            delete state.house.deviceSettings[entityId];
+        } else {
+            state.house.deviceSettings[entityId] = next;
+        }
+        pushHistory();
+        draw();
+        render3D();
+        renderPanels();
+        renderProps();
     }
 
     function setMode(mode) {
@@ -4288,11 +4572,9 @@ return module.exports;
         MODES.forEach(key => {
             const panel = $('panel' + key.charAt(0).toUpperCase() + key.slice(1));
             if (panel) {
-                // 模型库常显（ha_bridge 同款）：点家具按钮时自身会切到家具模式
-                panel.style.display = (key === mode || key === 'furniture') ? '' : 'none';
+                panel.style.display = (key === mode) ? '' : 'none';
             }
         });
-        updateStepper();
         canvas.style.cursor = (mode === 'room' || mode === 'opening') ? 'crosshair' : '';
         draw();
         renderProps();
@@ -4335,6 +4617,34 @@ return module.exports;
         return row;
     }
 
+    // 滑杆：拖动即时生效（input 事件），不重建面板，拖动手感顺
+    function propSlider(label, value, min, max, step, onChange) {
+        const row = document.createElement('div');
+        row.className = 'slider-row';
+        const lab = document.createElement('label');
+        lab.textContent = label;
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = String(min);
+        input.max = String(max);
+        input.step = String(step);
+        input.value = String(value);
+        const val = document.createElement('span');
+        val.className = 'val';
+        val.textContent = Math.round(value) + '%';
+        input.addEventListener('input', () => {
+            const num = Number(input.value);
+            val.textContent = Math.round(num) + '%';
+            if (isFinite(num)) {
+                onChange(clamp(num, min, max));
+            }
+        });
+        row.appendChild(lab);
+        row.appendChild(input);
+        row.appendChild(val);
+        return row;
+    }
+
     function propButtons(buttons) {
         const row = document.createElement('div');
         row.className = 'btn-row';
@@ -4346,6 +4656,52 @@ return module.exports;
             row.appendChild(btn);
         });
         return row;
+    }
+
+    const WALL_COLORS = ['#46505f', '#8a94a6', '#b8926a', '#5c7098', '#7d9a7f', '#9b6f6f', '#d8cfc0'];
+
+    function setWallProp(key, field, value) {
+        if (!state.house.wallProps) {
+            state.house.wallProps = {};
+        }
+        const wp = state.house.wallProps[key] || {};
+        if (value === null) {
+            delete wp[field];
+        } else {
+            wp[field] = value;
+        }
+        if (Object.keys(wp).length === 0) {
+            delete state.house.wallProps[key];
+        } else {
+            state.house.wallProps[key] = wp;
+        }
+        pushHistory();
+        draw();
+        render3D();
+        renderProps();
+        toast('墙体已更新');
+    }
+
+    // 轻量版：滑杆拖动时用（不重建属性面板、不弹 toast，避免打断拖动）
+    function applyWallProp(key, field, value) {
+        if (!state.house.wallProps) {
+            state.house.wallProps = {};
+        }
+        const wp = state.house.wallProps[key] || {};
+        if (value === null) {
+            delete wp[field];
+        } else {
+            wp[field] = value;
+        }
+        if (Object.keys(wp).length === 0) {
+            delete state.house.wallProps[key];
+        } else {
+            state.house.wallProps[key] = wp;
+        }
+        draw();
+        render3D();
+        scheduleAutosave();
+        pushHouseRev();
     }
 
     // 门窗换墙：更新 side 并把偏移按新墙跨度收住
@@ -4360,12 +4716,27 @@ return module.exports;
         afterGeometryChange();
     }
 
+    // 属性卡片落在左栏当前模式的容器里
+    const PROPS_CONTAINERS = {
+        room: 'roomProps', wall: 'wallProps', opening: 'openingProps',
+        furniture: 'furnProps', device: 'deviceProps',
+    };
+
     function renderProps() {
-        const box = $('props');
+        const sel = state.selection;
+        const key = (sel && PROPS_CONTAINERS[sel.type]) || PROPS_CONTAINERS[state.mode] || 'props';
+        // 清空所有容器，属性只在当前模式的容器里出现
+        Object.keys(PROPS_CONTAINERS).forEach(k => {
+            const el = $(PROPS_CONTAINERS[k]);
+            if (el) { el.innerHTML = ''; }
+        });
+        const fallback = $('props');
+        if (fallback && key !== 'props') { fallback.innerHTML = ''; }
+        const box = $(key) || fallback;
+        if (!box) { return; }
         box.innerHTML = '';
         const title = document.createElement('div');
         title.className = 'group-title';
-        const sel = state.selection;
         const selTypes = { room: '房间', opening: '门窗', furniture: '家具', device: '设备', wall: '墙体' };
         title.textContent = sel && selTypes[sel.type] ? ('属性 · ' + selTypes[sel.type]) : '属性';
         box.appendChild(title);
@@ -4379,16 +4750,59 @@ return module.exports;
         }
 
         if (sel.type === 'wall') {
-            const pair = { a: sel.a, b: sel.b };
-            const list = state.house.edges || [];
-            const found = list.find(item =>
-                (item.a === sel.a && item.b === sel.b) || (item.a === sel.b && item.b === sel.a));
-            const style = found ? found.style : 'normal';
-            box.appendChild(propButtons([
-                { text: '常规墙', primary: style === 'normal', onClick: () => setBoundaryStyle(pair, 'normal') },
-                { text: '矮墙', primary: style === 'low', onClick: () => setBoundaryStyle(pair, 'low') },
-                { text: '打通', primary: style === 'open', onClick: () => setBoundaryStyle(pair, 'open') },
-            ]));
+            const room = state.house.rooms.find(r => r.id === sel.roomId);
+            if (!room) {
+                return;
+            }
+            const edge = H.roomEdges(room).find(item => item.side === sel.side);
+            const key = sel.roomId + ':' + sel.side;
+            if (!state.house.wallProps) {
+                state.house.wallProps = {};
+            }
+            const wp = state.house.wallProps[key] || {};
+            const info = H.edgeStyle(state.house, room, sel.side);
+            const exterior = !info.other;
+            const defT = exterior ? H.WALL_T_EXT : H.WALL_T_INT;
+            const curT = wp.t || defT;
+            const curH = wp.h || (info.style === 'low' ? H.LOW_H : H.WALL_H);
+            const curColor = wp.color || '#46505f';
+            const curAlpha = typeof wp.alpha === 'number' ? wp.alpha : H.MIHOME.wallAlpha;
+            const lenText = document.createElement('p');
+            lenText.className = 'hint';
+            lenText.textContent = '长度 ' + (edge ? (edge.span / 100).toFixed(2) : '?') + ' m · '
+                + (exterior ? '外墙' : '内墙')
+                + ' · 透明度 0~100：0 全透明、100 不透明白墙、默认 60';
+            box.appendChild(lenText);
+            box.appendChild(propNumber('宽 cm', curT, 6, 60, 1,
+                v => setWallProp(key, 't', v === defT ? null : v)));
+            box.appendChild(propNumber('高 cm', curH, 30, 600, 10,
+                v => setWallProp(key, 'h', v === curH ? null : v)));
+            const colors = document.createElement('div');
+            colors.className = 'color-row';
+            WALL_COLORS.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'swatch' + (curColor === color ? ' on' : '');
+                swatch.style.background = color;
+                swatch.addEventListener('click', () =>
+                    setWallProp(key, 'color', curColor === color ? null : color));
+                colors.appendChild(swatch);
+            });
+            box.appendChild(colors);
+            // 透明度：滑杆 0~100 实时拖动生效（0 全透明、100 不透明白墙、默认 60）
+            const sliderRow = propSlider('透明 %', Math.round(curAlpha * 100), 0, 100, 1,
+                v => applyWallProp(key, 'alpha', v / 100));
+            box.appendChild(sliderRow);
+            const alphaNote = document.createElement('p');
+            alphaNote.className = 'hint';
+            alphaNote.textContent = '拖动实时生效：0 全透明 · 100 白色不透明 · 默认 60（拖回 60 即恢复默认）';
+            box.appendChild(alphaNote);
+            if (info.other) {
+                box.appendChild(propButtons([
+                    { text: '常规墙', primary: info.style === 'normal', onClick: () => setBoundaryStyle({ a: sel.roomId, b: info.other.id }, 'normal') },
+                    { text: '矮墙', primary: info.style === 'low', onClick: () => setBoundaryStyle({ a: sel.roomId, b: info.other.id }, 'low') },
+                    { text: '打通', primary: info.style === 'open', onClick: () => setBoundaryStyle({ a: sel.roomId, b: info.other.id }, 'open') },
+                ]));
+            }
             box.appendChild(propButtons([
                 { text: '取消选中', onClick: () => select(null) },
             ]));
@@ -4567,6 +4981,45 @@ return module.exports;
                 row.appendChild(selectEl);
                 box.appendChild(row);
             }
+            // 房间绑定（灯态/小程序分区优先按绑定）
+            const roomRow = document.createElement('div');
+            roomRow.className = 'field';
+            const roomLab = document.createElement('label');
+            roomLab.textContent = '房间';
+            const roomSel = document.createElement('select');
+            const optAuto = document.createElement('option');
+            optAuto.value = '';
+            optAuto.textContent = '按画布位置';
+            roomSel.appendChild(optAuto);
+            state.house.rooms.forEach(room => {
+                const opt = document.createElement('option');
+                opt.value = room.id;
+                opt.textContent = room.name;
+                if (H.boundRoomId(state.house, item.entityId) === room.id) {
+                    opt.selected = true;
+                }
+                roomSel.appendChild(opt);
+            });
+            roomSel.addEventListener('change', () => {
+                setDeviceSetting(item.entityId, { roomId: roomSel.value });
+            });
+            roomRow.appendChild(roomLab);
+            roomRow.appendChild(roomSel);
+            box.appendChild(roomRow);
+            // 前端显示开关（隐藏后 3D/小程序都不显示这台设备）
+            const showRow = document.createElement('div');
+            showRow.className = 'field';
+            const showLab = document.createElement('label');
+            showLab.textContent = '显示';
+            const showChk = document.createElement('input');
+            showChk.type = 'checkbox';
+            showChk.checked = !H.boundHidden(state.house, item.entityId);
+            showChk.addEventListener('change', () => {
+                setDeviceSetting(item.entityId, { hidden: !showChk.checked });
+            });
+            showRow.appendChild(showLab);
+            showRow.appendChild(showChk);
+            box.appendChild(showRow);
             box.appendChild(propButtons([
                 { text: '删除', danger: true, onClick: deleteSelection },
             ]));
@@ -4575,11 +5028,10 @@ return module.exports;
 
     const MODE_HINTS = {
         room: '空白处拖拽画房间；选中后拖四角改尺寸；双击改名；方向键微调。',
-        opening: '点墙线放门窗；按住沿墙滑动；[ ] 调宽窄。',
-        wall: '点两个房间共用的墙线选中，在属性面板里切换 常规墙 / 矮墙 / 打通。',
+        opening: '直接点画布上的门窗改属性；点「放门 / 放窗」后点墙线添加；[ ] 调宽窄。',
+        wall: '点画布上的墙选中，左栏可调宽窄、高度、颜色、透明度。',
         furniture: '左侧选家具类型，点画布放置；Ctrl+D 复制。',
-        device: '选设备后点画布标位置；灯会在 2D/3D 里按 HA 实时状态显示光斑。',
-        trace: '上传户型图 → 标比例尺 → 拖动对齐；对照底图描房间又快又准。',
+        device: '选设备后点画布标位置；左栏可绑房间、控制前端显示；灯按 HA 实时状态显示光斑。',
     };
 
     function afterGeometryChange() {
@@ -4595,12 +5047,38 @@ return module.exports;
     function initGL() {
         try {
             renderer = GL.createRenderer(previewCanvas);
+            if (renderer.setBackground) {
+                renderer.setBackground('#000000');
+            }
         } catch (e) {
             renderer = null;
         }
         if (!renderer) {
             $('previewTag').textContent = '当前浏览器不支持 WebGL';
         }
+    }
+
+    // ---------- 效果生成舞台（bakeStage：默认 2D CAD 平面，点生成搭建所选房间）----------
+    const bakeStageCanvas = $('bakeStage');
+    let bakeR = null;
+
+    function initBakeGL() {
+        try {
+            bakeR = GL.createRenderer(bakeStageCanvas);
+            if (bakeR.setBackground) {
+                bakeR.setBackground('#000000');
+            }
+        } catch (e) {
+            bakeR = null;
+        }
+    }
+
+    function resizeBakeStage() {
+        if (!bakeR) {
+            return;
+        }
+        const rect = bakeStageCanvas.getBoundingClientRect();
+        bakeR.resize(rect.width, rect.height, window.devicePixelRatio || 1);
     }
 
     function resizePreview() {
@@ -4625,7 +5103,9 @@ return module.exports;
 
     function markers() {
         const focusId = (state.selection && state.selection.type === 'device') ? state.selection.id : '';
-        return state.house.devices.map(item => {
+        return state.house.devices
+            .filter(item => !H.boundHidden(state.house, item.entityId))   // 前端隐藏的设备不进 3D
+            .map(item => {
             const meta = deviceMeta(item.entityId);
             return {
                 x: item.x,
@@ -4643,21 +5123,14 @@ return module.exports;
         if (!renderer) {
             return;
         }
-        const opts = { style: state.previewStyle, roomFloorColors: true, cullNearWalls: true };
-        // 模拟小程序聚焦：设备所在房间地板变橙
-        const entityId = selectedDeviceId();
-        const placed = entityId ? state.house.devices.find(item => item.entityId === entityId) : null;
-        if (state.simulateFocus && placed) {
-            const room = state.house.rooms.find(item =>
-                placed.x >= item.x && placed.x <= item.x + item.w
-                && placed.y >= item.y && placed.y <= item.y + item.h);
-            if (room) {
-                opts.highlightRoomId = room.id;
-            }
-        }
+        // 成品预览：半透明墙 + 家具家电 + 地板绑定灯态（开灯橙 / 关灯灰），与小程序一致
+        const floorColors = {};
+        state.house.rooms.forEach(room => {
+            floorColors[room.id] = buildRoomLit(room) ? H.MIHOME.floorLit : H.MIHOME.floor;
+        });
+        const opts = { style: 'solid', floorColors: floorColors, cullNearWalls: true };
         const scene = H.buildScene(state.house, markers(), cameraEye(), opts);
         // 新渲染器（June.Ⅰ 同一套）：solid 槽位按当前风格上传，模式固定 solid
-        skinWalls(scene);
         renderer.setSolid(scene.static);
         renderer.setMode('solid');
         renderer.setWalls(scene.walls);   // 半透明墙体 + 墙顶细线（v4 换后端时漏传，导致预览无墙）
@@ -4687,12 +5160,6 @@ return module.exports;
     previewCanvas.addEventListener('pointerdown', event => {
         if (!renderer) {
             return;
-        }
-        if (buildState) {
-            // 用户接管视角时中断搭建动画
-            cancelAnimationFrame(buildState.raf);
-            buildState = null;
-            $('previewTag').textContent = '总览';
         }
         previewCanvas.setPointerCapture(event.pointerId);
         camDrag = { x: event.clientX, y: event.clientY, pan: event.button === 2 };
@@ -4729,9 +5196,239 @@ return module.exports;
         return H.roomBounds(state.house) || { minX: 0, minY: 0, maxX: 1200, maxY: 900 };
     }
 
-    // ---------- 搭建动画（June.Ⅰ 主页特效预览）----------
+    // ---------- 效果生成（2D CAD 平面 → 单房间 3D 搭建，其余房间保持 2D）----------
     const View = window.ViewLib || null;
-    let buildState = null; // { roomId, room, from, to, start, furnN, raf }
+    const CAD_LINE = '#8ea3bd';
+    let bakeAnim = null;    // 播放中状态
+    let bakeHold = 0;       // 播完定格时间戳；户型一变就回默认
+    let bakeTab = 'A';      // A=特效前视角（CAD 2D），B=特效后视角（搭建完成态）
+    let bakeViewA = null;   // 特效前相机（用户可拖动调整）
+    let bakeViewB = null;   // 特效后相机（用户可拖动调整）
+    let bakeViewBRoom = ''; // bakeViewB 对应的房间 id
+
+    function pushHouseRev() {
+        state.bakeRev = (state.bakeRev || 0) + 1;
+    }
+
+    // CAD 顶视图：俯视近垂直（88°），距离按画布纵横比取景整屋
+    function bakeCadView() {
+        const b = bounds();
+        const cx = (b.minX + b.maxX) / 200;
+        const cz = (b.minY + b.maxY) / 200;
+        const sw = Math.max(b.maxX - b.minX, 200) / 100;
+        const sh = Math.max(b.maxY - b.minY, 200) / 100;
+        const rect = bakeStageCanvas.getBoundingClientRect();
+        const aspect = Math.max(0.4, rect.width / Math.max(1, rect.height));
+        const tanF = Math.tan(22.5 * Math.PI / 180);   // fov 45
+        const dist = Math.max((sh / 2) / tanF, (sw / 2) / (tanF * aspect)) * 1.22 + 0.9;
+        return { tx: cx, tz: cz, yaw: 0, pitch: 88, dist: Math.min(50, dist) };
+    }
+
+    function selectedBuildRoom() {
+        return state.house.rooms.find(item => item.id === $('buildRoom').value) || null;
+    }
+
+    // 特效后默认相机：贴到所选房间；该房间存过自定义机位则用存的
+    function ensureBakeViewB() {
+        const room = selectedBuildRoom();
+        if (!room) {
+            bakeViewB = bakeCadView();
+            bakeViewBRoom = '';
+            return bakeViewB;
+        }
+        if (bakeViewBRoom !== room.id) {
+            const saved = state.house.genViews
+                && state.house.genViews.afterRooms
+                && state.house.genViews.afterRooms[room.id];
+            bakeViewB = saved ? Object.assign({}, saved)
+                : (View ? View.roomView(state.house, room) : bakeCadView());
+            bakeViewBRoom = room.id;
+        }
+        return bakeViewB;
+    }
+
+    // 特效前相机：存过自定义机位则用存的，否则 CAD 顶视
+    function ensureBakeViewA() {
+        if (!bakeViewA) {
+            const saved = state.house.genViews && state.house.genViews.before;
+            bakeViewA = saved ? Object.assign({}, saved) : bakeCadView();
+        }
+        return bakeViewA;
+    }
+
+    // 用户拖动/缩放后把机位写回户型数据（随自动保存/保存到 HA/导出一起走）
+    function persistGenViews() {
+        if (!state.house.genViews) {
+            state.house.genViews = { before: null, afterRooms: {} };
+        }
+        const round = v => ({
+            tx: Math.round(v.tx * 1000) / 1000,
+            tz: Math.round(v.tz * 1000) / 1000,
+            yaw: Math.round(v.yaw * 10) / 10,
+            pitch: Math.round(v.pitch * 10) / 10,
+            dist: Math.round(v.dist * 100) / 100,
+        });
+        state.house.genViews.before = round(ensureBakeViewA());
+        if (bakeViewBRoom && bakeViewB) {
+            state.house.genViews.afterRooms[bakeViewBRoom] = round(bakeViewB);
+        }
+        scheduleAutosave();
+    }
+
+    function renderBakeCad() {
+        if (!bakeR) {
+            return;
+        }
+        const scene = H.buildScene(state.house, [], null, { style: 'blueprint' });
+        bakeR.setSolid(scene.static);
+        bakeR.setMode('solid');
+        bakeR.setWalls(scene.walls);
+        bakeR.setDynamic(scene.dynamic);
+        bakeR.setFx(null);
+        bakeR.setCamera(ensureBakeViewA());
+        bakeR.render();
+    }
+
+    // 特效后静态帧：所选房间 3D 搭建完成，其他房间保持 2D CAD 足迹
+    function renderBakeFinal() {
+        if (!bakeR) {
+            return;
+        }
+        const room = selectedBuildRoom();
+        if (!room) {
+            renderBakeCad();
+            return;
+        }
+        const house = state.house;
+        const lines = {};
+        const wallsMap = {};
+        const floorAlphas = {};
+        const furnMap = {};
+        house.rooms.forEach(item => {
+            const isCur = item.id === room.id;
+            lines[item.id] = { alpha: isCur ? 0 : 1, color: isCur ? '#ffb54d' : CAD_LINE };
+            wallsMap[item.id] = isCur ? 1 : 0;
+            floorAlphas[item.id] = isCur ? 0.92 : 0;
+        });
+        const lit = buildRoomLit(room);
+        house.furniture.forEach(item => {
+            if (roomOfItem(item) !== room.id) {
+                furnMap[item.id] = { k: 0.001, foot: { color: CAD_LINE, alpha: 0.85 } };
+            } else {
+                furnMap[item.id] = { k: 1 };
+            }
+        });
+        const floors = H.buildFloors(house, {
+            colors: { [room.id]: lit ? H.MIHOME.floorLit : H.MIHOME.floor },
+            alphas: floorAlphas,
+        });
+        const scene = H.buildScene(house, [], eyeFromView(ensureBakeViewB()), {
+            noFloors: true,
+            soft: true,
+            dimNearWalls: 0.10,   // 挡视野的墙统一 10% 透明度（更低的自定义值保持）
+            build: { lines: lines, walls: wallsMap, furn: furnMap },
+        });
+        bakeR.setSolid(scene.static);
+        bakeR.setMode('solid');
+        bakeR.setWalls(scene.walls);
+        bakeR.setFx(floors);
+        bakeR.setDynamic(scene.dynamic);
+        bakeR.setCamera(ensureBakeViewB());
+        bakeR.render();
+    }
+
+    function renderBakeStageStatic() {
+        if (!bakeR || bakeAnim) {
+            return;
+        }
+        if (bakeTab === 'B') {
+            renderBakeFinal();
+        } else {
+            renderBakeCad();
+        }
+    }
+
+    // ---------- 效果生成舞台交互：拖动旋转 · 右键平移 · 滚轮缩放 ----------
+    let bakeDrag = null;
+    bakeStageCanvas.addEventListener('contextmenu', event => event.preventDefault());
+    bakeStageCanvas.addEventListener('pointerdown', event => {
+        if (!bakeR) {
+            return;
+        }
+        if (bakeAnim) {
+            // 用户接管视角：中断特效，定格到特效后状态
+            cancelAnimationFrame(bakeAnim.raf);
+            bakeAnim = null;
+            bakeHold = 0;
+            bakeTab = 'B';
+            bakeCamSegUi();
+            $('bakeTag').textContent = '特效后 · ' + (selectedBuildRoom() || {}).name + '（已定格）';
+            renderBakeStageStatic();
+        }
+        bakeStageCanvas.setPointerCapture(event.pointerId);
+        bakeDrag = { x: event.clientX, y: event.clientY, pan: event.button === 2 };
+    });
+    bakeStageCanvas.addEventListener('pointermove', event => {
+        if (!bakeDrag || bakeAnim) {
+            return;
+        }
+        const view = bakeTab === 'B' ? ensureBakeViewB() : ensureBakeViewA();
+        if (!view) {
+            return;
+        }
+        const dx = event.clientX - bakeDrag.x;
+        const dy = event.clientY - bakeDrag.y;
+        bakeDrag.x = event.clientX;
+        bakeDrag.y = event.clientY;
+        if (bakeDrag.pan) {
+            const yawRad = view.yaw * Math.PI / 180;
+            const s = view.dist * 0.005;
+            view.tx -= (Math.cos(yawRad) * dx + Math.sin(yawRad) * dy) * s;
+            view.tz += (Math.sin(yawRad) * dx - Math.cos(yawRad) * dy) * s;
+        } else {
+            view.yaw -= dx * 0.4;
+            view.pitch = Math.max(8, Math.min(88, view.pitch + dy * 0.35));
+        }
+        renderBakeStageStatic();
+    });
+    bakeStageCanvas.addEventListener('pointerup', () => {
+        bakeDrag = null;
+        persistGenViews();   // 自定义机位随改动保存，下次打开还是这个视角
+    });
+    bakeStageCanvas.addEventListener('wheel', event => {
+        event.preventDefault();
+        if (bakeAnim) {
+            return;
+        }
+        const view = bakeTab === 'B' ? ensureBakeViewB() : ensureBakeViewA();
+        if (view) {
+            view.dist = Math.max(0.8, Math.min(60, view.dist * (event.deltaY > 0 ? 1.08 : 0.92)));
+            renderBakeStageStatic();
+            persistGenViews();
+        }
+    }, { passive: false });
+
+    function bakeCamSegUi() {
+        document.querySelectorAll('#bakeCamSeg button').forEach(b => {
+            b.classList.toggle('on', b.dataset.cam === bakeTab);
+        });
+    }
+    $('bakeCamSeg').addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b || b.dataset.cam === bakeTab) {
+            return;
+        }
+        bakeTab = b.dataset.cam;
+        bakeCamSegUi();
+        bakeHold = 0;
+        if (bakeTab === 'B') {
+            const room = selectedBuildRoom();
+            $('bakeTag').textContent = '特效后 · ' + (room ? room.name : '');
+        } else {
+            $('bakeTag').textContent = '2D CAD · 特效前视角';
+        }
+        renderBakeStageStatic();
+    });
 
     function buildRoomList() {
         const sel = $('buildRoom');
@@ -4772,91 +5469,97 @@ return module.exports;
     function buildRoomLit(room) {
         return state.house.devices.some(item => {
             const meta = deviceMeta(item.entityId);
-            if (meta.kind !== 'light') {
+            if (meta.kind !== 'light' || H.boundHidden(state.house, item.entityId)) {
                 return false;
             }
-            return item.x >= room.x && item.x <= room.x + room.w
-                && item.y >= room.y && item.y <= room.y + room.h
-                && deviceOn(item.entityId);
+            return deviceInRoom(item, room) && deviceOn(item.entityId);
         });
     }
 
+    // 设备归属房间：编辑器绑定（deviceSettings.roomId）优先，未绑定按画布坐标落在哪个房间
+    // 与小程序 roomHasLightOn 同一套语义：小程序设置页手动分房 > 编辑器绑定 > HA > 画布位置
+    function deviceInRoom(item, room) {
+        const bound = H.boundRoomId(state.house, item.entityId);
+        if (bound) {
+            return bound === room.id;
+        }
+        return item.x >= room.x && item.x <= room.x + room.w
+            && item.y >= room.y && item.y <= room.y + room.h;
+    }
+
     function startBuild() {
-        if (!renderer || !View) {
-            toast('当前环境不支持搭建动画');
+        if (!bakeR || !View) {
+            toast('当前环境不支持 WebGL，无法生成效果');
             return;
         }
         buildRoomList();
         const roomId = $('buildRoom').value;
         const room = state.house.rooms.find(item => item.id === roomId);
         if (!room) {
+            toast('先画几个房间再生成');
             return;
         }
-        if (buildState) {
-            cancelAnimationFrame(buildState.raf);
+        if (bakeAnim) {
+            cancelAnimationFrame(bakeAnim.raf);
         }
+        ensureBakeViewA();
+        ensureBakeViewB();
+        persistGenViews();   // 生成用的机位也落库，导出/小程序同款
         const furnN = state.house.furniture.filter(item => roomOfItem(item) === roomId).length;
-        buildState = {
+        bakeAnim = {
             roomId,
             room,
-            from: View.overviewView(state.house),
-            to: View.roomView(state.house, room),
+            from: Object.assign({}, bakeViewA),
+            to: Object.assign({}, bakeViewB),
             start: performance.now(),
             furnN,
             raf: 0,
         };
-        $('previewTag').textContent = '搭建动画 · ' + room.name;
-        buildFrame();
+        bakeHold = 0;
+        $('bakeTag').textContent = '生成中 · ' + room.name;
+        bakeFrame();
     }
 
     function stopBuild() {
-        if (buildState) {
-            cancelAnimationFrame(buildState.raf);
-        }
-        buildState = null;
-        $('previewTag').textContent = '总览';
-        render3D();
+        bakeAnim = null;
+        renderBakeStageStatic();
+        $('bakeTag').textContent = bakeTab === 'B'
+            ? '特效后 · ' + ((selectedBuildRoom() || {}).name || '') : '2D CAD · 特效前视角';
     }
 
-    function buildFrame() {
-        if (!buildState || !renderer) {
-            return;
-        }
+    // 搭建时间轴状态（舞台动画与关键帧出图共用同一份逻辑，保证小程序播的 = 编辑器看到的）
+    // t：秒；furnN：该房间家具件数；from/to：特效前/后机位
+    function bakeAnimState(house, room, t, furnN, from, to) {
         const clamp01 = v => Math.max(0, Math.min(1, v));
         const easeOut = k => 1 - Math.pow(1 - k, 3);
         const easeBack = k => {
             const c = 1.70158;
             return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2);
         };
-        const t = (performance.now() - buildState.start) / 1000;
-        const { room, from, to } = buildState;
-        const house = state.house;
-
-        // 相机：0~1.4s 总览 → 房间斜视角
+        // 相机：0~1.4s 特效前机位 → 特效后机位
         const cam = View.lerpView(from, to, View.easeInOut(clamp01(t / 1.4)));
 
-        // 房间轮廓线：其他房间变淡，当前房间橙色高亮；结尾段整体隐去
+        // 房间轮廓线：其他房间一直保持 2D CAD 亮线；当前房间橙色高亮、结尾淡出
         const ft0 = 2.2;
-        const l0 = ft0 + Math.max(buildState.furnN * 0.13, 0.1) + 0.2;
+        const l0 = ft0 + Math.max(furnN * 0.13, 0.1) + 0.2;
         const lineFade = clamp01((t - l0) / 0.55);
         const lines = {};
         house.rooms.forEach(item => {
             const isCur = item.id === room.id;
-            const baseAlpha = isCur ? 1 : View.lerp(0.95, 0.3, clamp01(t / 0.7));
             lines[item.id] = {
-                alpha: isCur ? baseAlpha * (1 - lineFade) : baseAlpha,
-                color: isCur ? '#ffb54d' : '#7f92ad',
+                alpha: isCur ? (1 - lineFade) : 1,
+                color: isCur ? '#ffb54d' : CAD_LINE,
             };
         });
 
-        // 墙体：1.4~2.1s 四面同步从地面长出
+        // 墙体：只有当前房间 1.4~2.1s 从地面长出；其他房间 gk=0 → 地上 CAD 足迹线
         const wallsMap = {};
         house.rooms.forEach(item => {
             wallsMap[item.id] = item.id === room.id
                 ? easeOut(clamp01((t - 1.4) / 0.7)) : 0;
         });
 
-        // 地板：0.7~1.5s 淡入（该房间灯开着就上橙色）
+        // 地板：只有当前房间 0.7~1.5s 淡入（灯开着上橙色）
         const lit = buildRoomLit(room);
         const floorAlphas = {};
         house.rooms.forEach(item => {
@@ -4868,10 +5571,14 @@ return module.exports;
             alphas: floorAlphas,
         });
 
-        // 家具：先全部置零（其他房间保持线条态），当前房间 2.2s 起逐件从地面长出
+        // 家具：其他房间 k≈0 → CAD 足迹线；当前房间 2.2s 起逐件从地面长出、足迹淡出
         const furnMap = {};
         house.furniture.forEach(item => {
-            furnMap[item.id] = { k: 0.001 };
+            if (roomOfItem(item) !== room.id) {
+                furnMap[item.id] = { k: 0.001, foot: { color: CAD_LINE, alpha: 0.85 } };
+            } else {
+                furnMap[item.id] = { k: 0.001, foot: { color: '#ffb54d', alpha: 0.9 } };
+            }
         });
         let idx = 0;
         house.furniture.forEach(item => {
@@ -4880,33 +5587,44 @@ return module.exports;
             }
             const t0 = ft0 + idx * 0.13;
             const k = t <= t0 ? 0.001 : easeBack(clamp01((t - t0) / 0.4));
-            furnMap[item.id] = { k };
+            furnMap[item.id] = { k, foot: { color: '#ffb54d', alpha: 0.9 } };
             idx += 1;
         });
 
-        const scene = H.buildScene(house, [], null, {
-            noFloors: true,
-            soft: true,
-            build: { lines: lines, walls: wallsMap, furn: furnMap },
-        });
-        skinWalls(scene);
-        renderer.setSolid(scene.static);
-        renderer.setMode('solid');
-        renderer.setWalls(scene.walls);
-        renderer.setFx(floors);
-        renderer.setDynamic(scene.dynamic);
-        renderer.setCamera(cam);
-        renderer.render();
+        return { cam, lines, wallsMap, floors, furnMap, l0, lit };
+    }
 
-        if (t >= l0 + 0.75) {
-            // 播完：把相机停在房间视角，回到正常预览
-            state.cam = Object.assign({}, state.cam, cam);
-            syncCamSliders();
-            stopBuild();
-            $('previewTag').textContent = room.name + ' · 搭建完成';
+    function bakeFrame() {
+        if (!bakeAnim || !bakeR) {
             return;
         }
-        buildState.raf = requestAnimationFrame(buildFrame);
+        const t = (performance.now() - bakeAnim.start) / 1000;
+        const { room, from, to } = bakeAnim;
+        const house = state.house;
+        const st = bakeAnimState(house, room, t, bakeAnim.furnN, from, to);
+        const scene = H.buildScene(house, [], eyeFromView(st.cam), {
+            noFloors: true,
+            soft: true,
+            dimNearWalls: 0.10,   // 挡视野的墙统一 10% 透明度（更低的自定义值保持）
+            build: { lines: st.lines, walls: st.wallsMap, furn: st.furnMap },
+        });
+        bakeR.setSolid(scene.static);
+        bakeR.setMode('solid');
+        bakeR.setWalls(scene.walls);
+        bakeR.setFx(st.floors);
+        bakeR.setDynamic(scene.dynamic);
+        bakeR.setCamera(st.cam);
+        bakeR.render();
+
+        if (t >= st.l0 + 0.75) {
+            // 播完：镜头停在房间视角，其他房间保持 2D CAD
+            bakeAnim = null;
+            bakeHold = performance.now();
+            bakeHoldRev = state.bakeRev || 0;
+            $('bakeTag').textContent = room.name + ' · 生成完成';
+            return;
+        }
+        bakeAnim.raf = requestAnimationFrame(bakeFrame);
     }
 
     $('btnBuildPlay').addEventListener('click', startBuild);
@@ -4919,37 +5637,9 @@ return module.exports;
     }
 
     function updateFocusPanel() {
-        const entityId = selectedDeviceId();
-        const placed = state.house.devices.find(item => item.entityId === entityId);
-        const hint = $('focusHint');
-        if (placed) {
-            const meta = deviceMeta(entityId);
-            hint.innerHTML = placed.focus
-                ? '「' + meta.name + '」已保存专属机位；小程序点它时用这个角度（虚线圆圈表示已自定义）。'
-                : '「' + meta.name + '」还没保存专属机位，小程序会按位置自动计算；调好角度后点「存为该设备聚焦」。';
-        } else {
-            hint.textContent = '选中一个设备后，可以把它点开时小程序飞到哪个角度、多高、多远都存下来。没存的设备按位置自动计算。';
-        }
         Array.from(document.querySelectorAll('.mode-btn[data-open]')).forEach(btn => {
             btn.classList.toggle('on', btn.dataset.open === state.openType);
         });
-        $('previewTag').textContent = placed ? ('聚焦预览：' + deviceMeta(entityId).name) : '默认视角（可直接拖动旋转）';
-    }
-
-    function cameraToFocus() {
-        const entityId = selectedDeviceId();
-        const placed = state.house.devices.find(item => item.entityId === entityId);
-        if (!placed) {
-            toast('先在画布上选中一个已放置的设备');
-            return;
-        }
-        const view = H.focusView(placed.x, placed.y, bounds());
-        applyCam(placed.focus || view, '聚焦预览：' + deviceMeta(entityId).name);
-    }
-
-    function cameraToDefault() {
-        const view = H.defaultView(bounds());
-        applyCam(state.house.view || view, '默认视角');
     }
 
     // ---------- 数据读写 ----------
@@ -4958,6 +5648,9 @@ return module.exports;
         state.selection = null;
         state.armedEntityId = '';
         state.traceImg = null;
+        // 特效机位从（可能被恢复的）户型数据里重读
+        bakeViewA = null;
+        bakeViewBRoom = '';
         state.traceAspect = (state.house.trace && state.house.trace.h && state.house.trace.w)
             ? state.house.trace.h / state.house.trace.w : 1;
         if (state.house.traceImage) {
@@ -5072,8 +5765,11 @@ return module.exports;
             if (!res.ok) {
                 throw new Error(data.error || ('HTTP ' + res.status));
             }
+            edLog('ha', '户型已存到 HA（' + state.house.rooms.length + ' 房间 / '
+                + state.house.devices.length + ' 设备）');
             toast('户型已存到 HA（小程序下次启动自动拉取）');
         } catch (e) {
+            edLog('err', '存到 HA 失败：' + e.message);
             toast('存到 HA 失败：' + e.message);
         }
     }
@@ -5171,8 +5867,10 @@ return module.exports;
             renderPanels();
             draw();
             render3D();
+            edLog('ha', '已拉取 ' + state.devices.length + ' 个设备（含实时状态）');
             toast('已拉取 ' + state.devices.length + ' 个设备（含实时状态）');
         } catch (e) {
+            edLog('err', '拉取设备失败：' + e.message);
             toast('拉取失败：' + e.message + '（页面需与 HA 同源打开，或 HA 配置 cors_allowed_origins）');
         }
     }
@@ -5229,36 +5927,6 @@ return module.exports;
         reader.readAsDataURL(file);
     }
 
-    // ---------- 顶部流程条（对齐 ha_bridge 工作流）----------
-    const STEP_MODES = { 1: 'trace', 3: 'room', 4: 'furniture', 5: 'device' };
-    Array.from(document.querySelectorAll('.step[data-step]')).forEach(el => {
-        el.addEventListener('click', () => {
-            const n = Number(el.dataset.step);
-            if (n === 2) { setMode('trace'); $('btnCalibScale').click(); return; }
-            if (n === 6) {
-                const card = $('bakeCard');
-                if (card) {
-                    card.classList.remove('flash');
-                    void card.offsetWidth;
-                    card.classList.add('flash');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-                toast('在右栏「导图」卡导出 / 上传到 HA');
-                return;
-            }
-            if (STEP_MODES[n]) { setMode(STEP_MODES[n]); }
-        });
-    });
-    function updateStepper() {
-        const m = state.mode;
-        const step = m === 'trace' ? 1
-            : (m === 'room' || m === 'opening' || m === 'wall') ? 3
-            : m === 'furniture' ? 4
-            : m === 'device' ? 5 : 3;
-        Array.from(document.querySelectorAll('.step[data-step]')).forEach(el => {
-            el.classList.toggle('on', Number(el.dataset.step) === step);
-        });
-    }
     $('snapSelect').addEventListener('change', () => {
         const tag = $('snapTag');
         if (tag) { tag.textContent = '吸附: ' + $('snapSelect').value + 'cm'; }
@@ -5268,29 +5936,15 @@ return module.exports;
     Array.from(document.querySelectorAll('.mode-btn[data-mode]')).forEach(btn => {
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
     });
-    Array.from(document.querySelectorAll('#styleSeg button')).forEach(btn => {
-        btn.addEventListener('click', () => {
-            state.previewStyle = btn.dataset.style;
-            Array.from(document.querySelectorAll('#styleSeg button')).forEach(b => {
-                b.classList.toggle('on', b === btn);
-            });
-            render3D();
-        });
-    });
-    $('chkSimFocus').addEventListener('change', () => {
-        state.simulateFocus = $('chkSimFocus').checked;
-        if (!state.simulateFocus) {
-            applyCam(state.house.view || H.defaultView(bounds()), '默认视角');
-        } else if (selectedDeviceId()) {
-            select(state.selection);
-        }
-        render3D();
-    });
     $('btnZoomIn').addEventListener('click', () => zoomBy(1.25));
     $('btnZoomOut').addEventListener('click', () => zoomBy(0.8));
     $('btnFit').addEventListener('click', () => {
         fitView();
         draw();
+    });
+    $('btnSavePlan').addEventListener('click', () => {
+        persistGenViews();   // 顺带把特效机位落库
+        saveHouseToHA();
     });
 
     function zoomBy(factor) {
@@ -5305,160 +5959,108 @@ return module.exports;
 
     Array.from(document.querySelectorAll('.mode-btn[data-open]')).forEach(btn => {
         btn.addEventListener('click', () => {
-            state.openType = btn.dataset.open;
+            // 再点一次取消武装，回到纯选中模式
+            state.openType = state.openType === btn.dataset.open ? '' : btn.dataset.open;
             updateFocusPanel();
         });
     });
 
-    $('btnUndo').addEventListener('click', undo);
-    $('btnRedo').addEventListener('click', redo);
-    $('snapSelect').addEventListener('change', () => {
-        state.snapGrid = Number($('snapSelect').value);
-        toast('吸附精度：' + state.snapGrid + 'cm');
-    });
-
-    $('btnLoadHA').addEventListener('click', loadFromHA);
-    $('btnOpenFile').addEventListener('click', () => $('fileInput').click());
-    $('fileInput').addEventListener('change', event => {
-        const file = event.target.files && event.target.files[0];
-        if (file) {
-            loadFromFile(file);
-        }
-        event.target.value = '';
-    });
-    $('btnSaveFile').addEventListener('click', download);
-    $('btnCopy').addEventListener('click', copyJson);
-    $('btnPaste').addEventListener('click', () => openJsonDialog('粘贴户型 JSON', '', '导入'));
-    $('btnSample').addEventListener('click', () => {
-        if (window.confirm('载入示例会覆盖当前户型，继续？')) {
-            state.history = [];
-            state.histIndex = -1;
-            setHouse(H.sampleHouse(), '已载入示例（含客厅/餐厅打通边界）');
-            pushHistory();
-            refreshHistoryButtons();
-        }
-    });
-    $('btnClear').addEventListener('click', () => {
-        if (window.confirm('清空所有房间、门窗、家具和设备锚点？')) {
-            state.history = [];
-            state.histIndex = -1;
-            setHouse({ rooms: [], openings: [], furniture: [], devices: [] }, '已清空');
-            pushHistory();
-            refreshHistoryButtons();
-        }
-    });
-
-    $('jsonDlgCancel').addEventListener('click', () => $('jsonDialog').close());
-    $('jsonDlgOk').addEventListener('click', () => {
-        if ($('jsonDlgOk').dataset.mode === 'close') {
-            $('jsonDialog').close();
-            return;
-        }
-        try {
-            const data = JSON.parse($('jsonText').value);
-            $('jsonDialog').close();
-            importHouseData(data, '已导入 JSON');
-        } catch (e) {
-            toast('JSON 解析失败：' + e.message);
-        }
-    });
-
     $('btnFetchDevices').addEventListener('click', fetchDevices);
     $('btnAddDevice').addEventListener('click', addDeviceManually);
+    if ($('deviceFilter')) {
+        $('deviceFilter').addEventListener('input', () => {
+            state.deviceFilter = $('deviceFilter').value.trim();
+            renderPanels();
+        });
+    }
 
-    $('btnPickTrace').addEventListener('click', () => $('traceInput').click());
-    $('traceInput').addEventListener('change', event => {
-        const file = event.target.files && event.target.files[0];
-        if (file) {
-            loadTraceFile(file);
+    // ---------- 运行日志面板（编辑器本地日志 + 小程序推到 HA 的日志） ----------
+    let logTab = 'ed';
+
+    function openLogDlg() {
+        const dlg = $('logDlg');
+        if (dlg && dlg.showModal) {
+            dlg.showModal();
         }
-        event.target.value = '';
-    });
-    $('btnCalibScale').addEventListener('click', () => {
-        if (!state.house.traceImage) {
-            toast('先上传底图');
+        refreshLogView();
+    }
+
+    function setLogTab(tab) {
+        logTab = tab;
+        $('logTabEd').classList.toggle('on', tab === 'ed');
+        $('logTabMp').classList.toggle('on', tab === 'mp');
+        refreshLogView();
+    }
+
+    function refreshLogView() {
+        if (logTab === 'ed') {
+            $('logText').value = editorLogs.length ? editorLogs.join('\n') : '（还没有日志）';
+            $('logHint').textContent = '编辑器日志：操作与报错自动记录（保留最近 ' + EDITOR_LOG_MAX + ' 行）。';
             return;
         }
-        state.calib = {};
-        toast('在底图上点已知长度的两端（如一面墙）');
-    });
-    $('traceOpacity').addEventListener('input', () => {
-        state.traceOpacity = Number($('traceOpacity').value);
-        $('traceOpacityVal').textContent = Math.round(state.traceOpacity * 100) + '%';
-        draw();
-    });
-    $('btnTraceRemove').addEventListener('click', () => {
-        if (!state.house.traceImage) {
+        const base = haBase();
+        if (!base) {
+            $('logText').value = '先在「设备」面板填 HA 地址（或把编辑器放进 HA 打开）——小程序日志存在 HA 户型中枢里。';
             return;
         }
-        state.house.traceImage = '';
-        delete state.house.trace;
-        state.traceImg = null;
-        pushHistory();
-        draw();
-        renderProps();
-        toast('已移除底图');
-    });
+        $('logText').value = '正在读取小程序日志…';
+        $('logHint').textContent = '小程序日志：小程序连接同一 HA 后自动上报（出错即推，最快 60 秒一次）；HA 重启后清空。';
+        fetch(base + '/api/june_i/logs?t=' + Date.now(), { headers: haHeaders() })
+            .then(res => res.ok ? res.json() : Promise.reject(new Error('HTTP ' + res.status)))
+            .then(data => {
+                const lines = (data.lines || []).map(item =>
+                    '[' + item.t + '] ' + (item.env ? '(' + item.env + ') ' : '') + item.line);
+                $('logText').value = lines.length
+                    ? lines.join('\n')
+                    : '（还没有小程序日志：手机端小程序连上这个 HA 后自动上报）';
+            })
+            .catch(e => {
+                $('logText').value = '读取失败：' + e.message
+                    + '（需安装 June.Ⅰ 户型中枢集成 v1.4.5+，并重启 HA 生效）';
+            });
+    }
 
-    $('btnCamDefault').addEventListener('click', cameraToDefault);
-    $('btnCamFocus').addEventListener('click', cameraToFocus);
-
-    $('btnSaveDefault').addEventListener('click', () => {
-        state.house.view = {
-            tx: Math.round(state.cam.tx * 1000) / 1000,
-            tz: Math.round(state.cam.tz * 1000) / 1000,
-            yaw: Math.round(state.cam.yaw * 10) / 10,
-            pitch: Math.round(state.cam.pitch * 10) / 10,
-            dist: Math.round(state.cam.dist * 100) / 100,
-        };
-        pushHistory();
-        renderPanels();
-        toast('已保存为默认视角，导出 JSON 后生效');
-    });
-
-    $('btnSaveFocus').addEventListener('click', () => {
-        const entityId = selectedDeviceId();
-        const placed = state.house.devices.find(item => item.entityId === entityId);
-        if (!placed) {
-            toast('先在画布上选中一个已放置的设备');
-            return;
+    $('btnLogs').addEventListener('click', openLogDlg);
+    $('logClose').addEventListener('click', () => { try { $('logDlg').close(); } catch (e) { /* 忽略 */ } });
+    $('logTabEd').addEventListener('click', () => setLogTab('ed'));
+    $('logTabMp').addEventListener('click', () => setLogTab('mp'));
+    $('logRefresh').addEventListener('click', refreshLogView);
+    $('logCopy').addEventListener('click', () => {
+        const text = $('logText').value;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => toast('日志已复制')).catch(() => {
+                $('logText').select();
+                toast('复制失败，已全选，请 Ctrl+C');
+            });
+        } else {
+            $('logText').select();
+            toast('已全选，请 Ctrl+C');
         }
-        placed.focus = {
-            tx: Math.round(placed.x / 100 * 1000) / 1000,
-            tz: Math.round(placed.y / 100 * 1000) / 1000,
-            yaw: Math.round(state.cam.yaw * 10) / 10,
-            pitch: Math.round(state.cam.pitch * 10) / 10,
-            dist: Math.round(state.cam.dist * 100) / 100,
-        };
-        pushHistory();
-        updateFocusPanel();
-        draw();
-        render3D();
-        toast('已保存「' + deviceMeta(entityId).name + '」的聚焦机位');
     });
-
-    $('btnClearFocus').addEventListener('click', () => {
-        const placed = state.house.devices.find(item => item.entityId === selectedDeviceId());
-        if (!placed || !placed.focus) {
-            toast('该设备没有自定义机位');
-            return;
+    $('logClear').addEventListener('click', () => {
+        if (logTab === 'ed') {
+            editorLogs.length = 0;
+            edLog('app', '日志已清空');
+            refreshLogView();
+        } else {
+            toast('小程序日志存在 HA 内存里，重启 HA 即清空');
         }
-        delete placed.focus;
-        pushHistory();
-        updateFocusPanel();
-        draw();
-        render3D();
-        toast('已改为自动计算');
     });
 
     window.addEventListener('resize', () => {
         resizeCanvas();
         resizePreview();
+        resizeBakeStage();
         render3D();
+        if (!bakeAnim) {
+            renderBakeStageStatic();
+        }
     });
 
     // ---------- 启动 ----------
     function boot() {
+        edLog('app', '编辑器启动 · ' + state.house.rooms.length + ' 房间 / '
+            + state.house.devices.length + ' 设备 / ' + Object.keys(state.house.deviceSettings || {}).length + ' 条设备绑定');
         initGL();
         resizeCanvas();
         resizePreview();
@@ -5614,30 +6216,18 @@ return module.exports;
      * 所以导出的图 = 你在预览里看到的效果。
      * @return {{w:number,h:number,hot:Array}} 尺寸与热区（图像像素坐标）
      */
-    // 墙皮：把 MIHOME 近白实墙换成 viewer3d 同款淡蓝灰玻璃（预览与导出同一观感）
-    function skinWalls(scene) {
-        const g = scene && scene.walls;
-        if (!g || !g.colors || !g.alphas) {
-            return;
-        }
-        const wall = bakeHexRgb('#aebfda');
-        const glass = bakeHexRgb('#9fc4e8');
-        const wallA = (H.MIHOME && H.MIHOME.wallAlpha) || 0.88;
-        const glassA = (H.MIHOME && H.MIHOME.glassAlpha) || 0.52;
-        for (let i = 0; i < g.alphas.length; i += 1) {
-            const a = g.alphas[i];
-            if (Math.abs(a - wallA) < 0.02) {
-                g.colors[i * 3] = wall[0] / 255;
-                g.colors[i * 3 + 1] = wall[1] / 255;
-                g.colors[i * 3 + 2] = wall[2] / 255;
-                g.alphas[i] = 0.40;
-            } else if (Math.abs(a - glassA) < 0.02) {
-                g.colors[i * 3] = glass[0] / 255;
-                g.colors[i * 3 + 1] = glass[1] / 255;
-                g.colors[i * 3 + 2] = glass[2] / 255;
-                g.alphas[i] = 0.30;
-            }
-        }
+    // 墙皮：MIHOME 已直接采用 viewer3d 淡蓝灰配色（wall #aebfda / 透明度 0.6），
+    // 预览、特效、导出天然同观感，无需再调色
+    // 由相机视图反推眼位（与渲染器 cameraEye 同一套公式），供挡视野墙判定
+    function eyeFromView(view) {
+        const yawRad = view.yaw * Math.PI / 180;
+        const pitchRad = view.pitch * Math.PI / 180;
+        const cosP = Math.cos(pitchRad);
+        return [
+            view.tx + view.dist * cosP * Math.sin(yawRad),
+            view.dist * Math.sin(pitchRad),
+            view.tz + view.dist * cosP * Math.cos(yawRad),
+        ];
     }
 
     function bakeDraw(cv, houseIn, camIn, sup) {
@@ -5647,8 +6237,8 @@ return module.exports;
             scale: Math.min(2.5, Math.max(0.4, Number(camIn.scale) || 1)),
             margin: Math.min(120, Math.max(0, Math.round(Number(camIn.margin) || 0))),
         };
-        const scene = H.buildScene(houseIn, [], bakeEye(cam, houseIn), { style: 'solid', roomFloorColors: true, cullNearWalls: true });
-        skinWalls(scene);
+        // 地板统一灰色基底（MIHOME.floor）：小程序端会按实时灯态把开灯房间叠涂暖橙色
+        const scene = H.buildScene(houseIn, [], bakeEye(cam, houseIn), { style: 'solid', cullNearWalls: true });
         return bakeBaker(cv).shoot({
             static: scene.static,
             walls: scene.walls,
@@ -5656,14 +6246,6 @@ return module.exports;
             sup: sup || 1,
             hot: houseIn.rooms || [],
         });
-    }
-
-    function drawBakePreview() {
-        const cv = $('bakePreview');
-        if (!cv || !state.house || !state.house.rooms.length) {
-            return;
-        }
-        bakeDraw(cv, state.house, bakeCam, 1);
     }
 
     function bakeSyncUi() {
@@ -5681,14 +6263,99 @@ return module.exports;
     function bakeBuild() {
         const cv = document.createElement('canvas');
         const res = bakeDraw(cv, state.house, bakeCam, 2);   // 2x：适配 dpr 2~3 的手机屏
+        const gv = state.house.genViews || {};
+        const genViewsOut = {};
+        if (gv.before) {
+            genViewsOut.before = gv.before;
+        }
+        if (gv.afterRooms && Object.keys(gv.afterRooms).length) {
+            genViewsOut.rooms = gv.afterRooms;
+        }
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.3.5)',
+            generator: '3d_JX 线条导出 (june-i v1.4.5)',
             camera: bakeCam,
+            genViews: Object.keys(genViewsOut).length ? genViewsOut : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
         };
         return { cv: cv, res: res, manifest: manifest };
+    }
+
+    // ---------- 房间生成特效关键帧（小程序进房间时连播） ----------
+    // 每个房间烘 N 帧（特效前 CAD → 相机飞进 → 地板淡入 → 墙生长 → 家具落位 → 收尾）
+    // + 一张灯全开收尾帧（小程序按实时灯态挑结尾帧）。机位用户型里存的 genViews。
+    const ANIM_FRAME = { N: 8, MS: 110, W: 720, H: 540 };
+
+    function cvToDataUrl(cv, mime) {
+        return new Promise(resolve => {
+            cv.toBlob(blob => {
+                const fr = new FileReader();
+                fr.onload = () => resolve(fr.result);
+                fr.readAsDataURL(blob);
+            }, mime || 'image/png');
+        });
+    }
+
+    function renderAnimFrame(rend, house, room, t, furnN, from, to, forceLit) {
+        const st = bakeAnimState(house, room, t, furnN, from, to);
+        const scene = H.buildScene(house, [], eyeFromView(st.cam), {
+            noFloors: true,
+            soft: true,
+            dimNearWalls: 0.10,
+            build: { lines: st.lines, walls: st.wallsMap, furn: st.furnMap },
+        });
+        const floors = forceLit
+            ? H.buildFloors(house, {
+                colors: { [room.id]: H.MIHOME.floorLit },
+                alphas: { [room.id]: 0.92 },
+            })
+            : st.floors;
+        rend.setSolid(scene.static);
+        rend.setMode('solid');
+        rend.setWalls(scene.walls);
+        rend.setFx(floors);
+        rend.setDynamic(scene.dynamic);
+        rend.setCamera(st.cam);
+        rend.render();
+    }
+
+    async function bakeRoomAnim(roomId, files) {
+        const house = H.normalizeHouse(state.house);
+        const room = house.rooms.find(item => item.id === roomId);
+        if (!room) {
+            return null;
+        }
+        const gv = house.genViews || {};
+        const from = gv.before || bakeCadView();
+        const savedAfter = gv.afterRooms && gv.afterRooms[room.id];
+        const to = savedAfter || (View ? View.roomView(house, room) : from);
+        const furnN = house.furniture.filter(item => roomOfItem(item) === room.id).length;
+        const tEnd = 2.2 + Math.max(furnN * 0.13, 0.1) + 0.2 + 0.75;
+
+        const cv = document.createElement('canvas');
+        cv.width = ANIM_FRAME.W;
+        cv.height = ANIM_FRAME.H;
+        const rend = GL.createRenderer(cv, { preserve: true });
+        if (rend.setBackground) {
+            rend.setBackground('#000000');
+        }
+        rend.resize(ANIM_FRAME.W, ANIM_FRAME.H, 1);
+
+        const frames = [];
+        for (let i = 0; i < ANIM_FRAME.N; i += 1) {
+            const t = (i / (ANIM_FRAME.N - 1)) * tEnd;
+            renderAnimFrame(rend, house, room, t, furnN, from, to, false);
+            const name = 'anim-' + roomId + '-f' + i + '.png';
+            files[name] = await cvToDataUrl(cv);
+            frames.push(name);
+        }
+        // 灯全开收尾帧
+        renderAnimFrame(rend, house, room, tEnd, furnN, from, to, true);
+        const litName = 'anim-' + roomId + '-lit.png';
+        files[litName] = await cvToDataUrl(cv);
+        rend.release();
+        return { frames: frames, lit: litName, ms: ANIM_FRAME.MS };
     }
 
     async function bakeUploadHA() {
@@ -5706,6 +6373,7 @@ return module.exports;
             return;
         }
         bakeSaveCam();
+        persistGenViews();
         const built = bakeBuild();
         const files = {};
         await new Promise(resolve => {
@@ -5715,6 +6383,21 @@ return module.exports;
                 fr.readAsDataURL(blob);
             }, 'image/png');
         });
+        // 每个房间烘生成特效关键帧（小程序进房自动连播）
+        const anim = { rooms: {} };
+        try {
+            for (let i = 0; i < state.house.rooms.length; i += 1) {
+                const room = state.house.rooms[i];
+                toast('生成特效帧 ' + (i + 1) + '/' + state.house.rooms.length + ' · ' + room.name);
+                const res2 = await bakeRoomAnim(room.id, files);
+                if (res2) {
+                    anim.rooms[room.id] = res2;
+                }
+            }
+            built.manifest.anim = anim;
+        } catch (e) {
+            toast('特效帧生成失败（总览图仍会上传）：' + e.message);
+        }
         try {
             const res = await fetch(base + '/api/june_i/render', {
                 method: 'PUT',
@@ -5725,8 +6408,11 @@ return module.exports;
             if (!res.ok) {
                 throw new Error(data.error || ('HTTP ' + res.status));
             }
-            toast('渲染图已上传 HA（小程序启动时自动拉取，无需拷文件）');
+            edLog('ha', '渲染图+特效帧已上传 HA（'
+                + Object.keys(anim.rooms).length + ' 房间特效 / 总览 ' + built.manifest.overview.w + 'x' + built.manifest.overview.h + '）');
+            toast('渲染图+特效帧已上传 HA（小程序启动时自动拉取）');
         } catch (e) {
+            edLog('err', '渲染上传失败：' + e.message);
             toast('上传失败：' + e.message);
         }
     }
@@ -5754,11 +6440,20 @@ return module.exports;
             setTimeout(() => URL.revokeObjectURL(a.href), 3000);
             done();
         }, 'image/png');
+        const gv2 = state.house.genViews || {};
+        const genViewsOut2 = {};
+        if (gv2.before) {
+            genViewsOut2.before = gv2.before;
+        }
+        if (gv2.afterRooms && Object.keys(gv2.afterRooms).length) {
+            genViewsOut2.rooms = gv2.afterRooms;
+        }
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.3.5)',
+            generator: '3d_JX 线条导出 (june-i v1.4.5)',
             camera: bakeCam,
+            genViews: Object.keys(genViewsOut2).length ? genViewsOut2 : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
         };
         const blob2 = new Blob([JSON.stringify(manifest, null, 1)], { type: 'application/json' });
@@ -5777,7 +6472,6 @@ return module.exports;
         }
         bakeCam.rot = Number(b.dataset.rot);
         bakeSyncUi();
-        drawBakePreview();
         bakeSaveCam();
     });
     ['bakePitch', 'bakeScale', 'bakeMargin'].forEach(id => {
@@ -5786,7 +6480,6 @@ return module.exports;
             bakeCam.scale = Number($('bakeScale').value);
             bakeCam.margin = Number($('bakeMargin').value);
             bakeSyncUi();
-            drawBakePreview();
             bakeSaveCam();
         });
     });
@@ -5794,8 +6487,24 @@ return module.exports;
     $('btnBakeUpload').addEventListener('click', bakeUploadHA);
     $('btnSaveHA').addEventListener('click', saveHouseToHA);
     bakeSyncUi();
-    drawBakePreview();
-    setInterval(drawBakePreview, 2500);   // 房子改完 2.5s 内自动刷新预览
+
+    // 效果生成舞台：默认特效前 CAD 视角；播完定格，户型一变（或 12s 后）回当前标签页静态帧
+    let bakeHoldRev = 0;
+    initBakeGL();
+    resizeBakeStage();
+    renderBakeStageStatic();
+    $('buildRoom').addEventListener('change', () => {
+        bakeViewBRoom = '';   // 换房间 → 特效后相机重新取景
+        bakeHold = 0;
+        renderBakeStageStatic();
+    });
+    setInterval(() => {
+        if (!bakeAnim && (!bakeHold || performance.now() - bakeHold > 12000
+            || (state.bakeRev || 0) !== bakeHoldRev)) {
+            bakeHold = 0;
+            renderBakeStageStatic();
+        }
+    }, 2500);
 
     boot();
 })();

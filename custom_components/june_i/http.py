@@ -4,17 +4,24 @@
     GET / PUT  /api/june_i/house          户型 JSON
     GET / PUT  /api/june_i/render         预渲染清单（manifest + 文件 base64）
     GET        /api/june_i/media/{name}   渲染图片（PNG bytes）
+    GET / POST /api/june_i/logs           诊断日志（小程序推 / 编辑器读，仅内存暂存）
 """
 import base64
 import binascii
 import json
 import re
+import time
 
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 
 SAFE_NAME = re.compile(r"^[A-Za-z0-9._-]{1,80}$")
-MAX_FILE_BYTES = 3 * 1024 * 1024  # 单个媒体文件上限（渲染图几十 KB，远够）
+MAX_FILE_BYTES = 3 * 1024 * 1024  # 单个媒体文件上限（渲染图/特效帧几十 KB，远够）
+MAX_FILES = 200  # 总览图 + 每房间 9 张特效关键帧（10 房 ≈ 91 张，留足余量）
+
+# 诊断日志环形缓冲（仅内存，HA 重启即清空）：编辑器「日志」面板读取
+LOG_MAX = 800
+_diag_logs = []  # [{t: 时间戳, env: 来源设备, line: 日志行}]
 
 
 class JuneHouseView(HomeAssistantView):
@@ -64,7 +71,7 @@ class JuneRenderView(HomeAssistantView):
         files = body.get("files") or {}
         if not isinstance(manifest, dict) or not manifest.get("overview"):
             return self.json({"error": "manifest 缺少 overview"}, status=400)
-        if len(files) > 32:
+        if len(files) > MAX_FILES:
             return self.json({"error": "文件太多"}, status=400)
 
         media = {}
@@ -114,7 +121,49 @@ class JuneMediaView(HomeAssistantView):
         return web.Response(body=raw, content_type=content_type)
 
 
+class JuneLogsView(HomeAssistantView):
+    """诊断日志：小程序 POST 推送，电脑端编辑器 GET 读取（内存暂存，重启即清）。"""
+
+    url = "/api/june_i/logs"
+    name = "api:june_i:logs"
+    requires_auth = True
+
+    async def get(self, request):
+        return self.json({
+            "count": len(_diag_logs),
+            "lines": [
+                {
+                    "t": item["t"],
+                    "env": item["env"],
+                    "line": item["line"],
+                }
+                for item in _diag_logs
+            ],
+        })
+
+    async def post(self, request):
+        try:
+            body = await request.json()
+        except (ValueError, TypeError):
+            return self.json({"error": "bad json"}, status=400)
+        env = str((body or {}).get("env") or "mini")[:60]
+        lines = (body or {}).get("lines")
+        if not isinstance(lines, list):
+            return self.json({"error": "lines 必须是数组"}, status=400)
+        now = time.strftime("%m-%d %H:%M:%S")
+        added = 0
+        for line in lines[-300:]:
+            text = str(line).strip()
+            if not text:
+                continue
+            _diag_logs.append({"t": now, "env": env, "line": text[:300]})
+            added += 1
+        if _diag_logs:
+            del _diag_logs[:-LOG_MAX]
+        return self.json({"ok": True, "added": added})
+
+
 def setup_http(hass, hub) -> None:
     """注册 API 视图（视图内部经 request.app["hass"].data["june_i"] 取数据）。"""
-    for view in (JuneHouseView(), JuneRenderView(), JuneMediaView()):
+    for view in (JuneHouseView(), JuneRenderView(), JuneMediaView(), JuneLogsView()):
         hass.http.register_view(view)
