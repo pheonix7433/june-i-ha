@@ -467,7 +467,7 @@
     <div class="topbar">
         <div class="brand">
             <div class="t"><b>June.Ⅰ·3D户型编辑器</b></div>
-            <span class="ver-tag" id="verTag">v1.4.5</span>
+            <span class="ver-tag" id="verTag">v1.4.6</span>
         </div>
 
         <div class="spacer"></div>
@@ -6087,20 +6087,27 @@ return module.exports;
             $('haToken').value = savedToken;
         }
 
-        // 优先读 HA 上的户型；读不到就恢复上次自动保存的
+        // 优先读 HA 上的户型（集成 API → /local/house.json 兜底）；读不到就恢复上次自动保存的
         if (location.protocol !== 'file:') {
-            fetch(location.origin + '/local/house.json?t=' + Date.now())
-                .then(res => (res.ok ? res.json() : null))
-                .then(data => {
-                    if (data) {
-                        state.history = [];
-                        state.histIndex = -1;
-                        setHouse(data, '已自动读取当前户型');
-                        pushHistory();
-                        refreshHistoryButtons();
-                    }
-                })
-                .catch(() => { maybeRestoreAutosave(); });
+            const loadFrom = (url, withAuth, next) => {
+                fetch(url, withAuth ? { headers: haHeaders() } : undefined)
+                    .then(res => (res.ok ? res.json() : Promise.reject(new Error('HTTP ' + res.status))))
+                    .then(data => {
+                        if (data && data.rooms && data.rooms.length) {
+                            state.history = [];
+                            state.histIndex = -1;
+                            setHouse(data, '已自动读取当前户型');
+                            pushHistory();
+                            refreshHistoryButtons();
+                        } else {
+                            next();
+                        }
+                    })
+                    .catch(next);
+            };
+            loadFrom(location.origin + '/api/june_i/house?t=' + Date.now(), true, () => {
+                loadFrom(location.origin + '/local/house.json?t=' + Date.now(), false, maybeRestoreAutosave);
+            });
         } else {
             maybeRestoreAutosave();
         }
@@ -6274,7 +6281,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.5)',
+            generator: '3d_JX 线条导出 (june-i v1.4.6)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut).length ? genViewsOut : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
@@ -6451,7 +6458,7 @@ return module.exports;
         const manifest = {
             format: 1,
             updatedAt: Date.now(),
-            generator: '3d_JX 线条导出 (june-i v1.4.5)',
+            generator: '3d_JX 线条导出 (june-i v1.4.6)',
             camera: bakeCam,
             genViews: Object.keys(genViewsOut2).length ? genViewsOut2 : undefined,
             overview: { src: 'overview.png', w: res.w, h: res.h, hot: res.hot },
